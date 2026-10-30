@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@blazek.design — Squeeze me</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- animated gradient (WebGL) -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div id="bg-fallback" aria-hidden="true"></div>
+
+  <main id="hero">
+    <div id="stage">
+      <!-- left: copy -->
+      <div id="copy" class="layer">
+        <h1 class="title">
+          <span class="line"><span class="word">Hello,</span> <span class="word">I’m</span></span>
+          <span class="line dim"><span class="word">@blazek.design</span></span>
+        </h1>
+        <a class="btn" href="#work"><span>Explore work</span></a>
+      </div>
+
+      <!-- centre: the head -->
+      <div id="headLayer" class="layer">
+        <div id="headWrap">
+          <canvas id="head"></canvas>
+        </div>
+        <!-- stickers that pop when the head is crumpled -->
+        <div id="stickers">
+          <div class="sticker" id="stOuch">
+            <div class="rot"><img src="assets/ouch.svg" alt="Ouch!" draggable="false"></div>
+          </div>
+          <div class="sticker" id="stBolt1">
+            <div class="rot"><img src="assets/bolt-1.svg" alt="" draggable="false"></div>
+          </div>
+          <div class="sticker" id="stBolt2">
+            <div class="rot"><img src="assets/bolt-2.svg" alt="" draggable="false"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right: hand-tracking media box -->
+      <div id="mediaLayer" class="layer">
+        <div id="media">
+          <video id="cam" playsinline muted></video>
+          <canvas id="skel"></canvas>
+          <img id="handPlaceholder" src="assets/hand-skeleton.svg" alt="" draggable="false">
+          <div class="chip" id="hiChip"><img src="assets/hand-icon.svg" alt=""><span>Say Hi!</span></div>
+          <button class="chip" id="soundBtn" type="button" aria-pressed="false" title="Sound (S)">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 6h2.2L8.6 3.2v9.6L5.2 10H3z" fill="none" stroke="#fff" stroke-linejoin="round"/><path class="wave" d="M10.6 5.6a3.2 3.2 0 0 1 0 4.8M12.3 4a5.6 5.6 0 0 1 0 8" fill="none" stroke="#fff" stroke-linecap="round"/><path class="slash" d="M10.5 6l3.5 4M14 6l-3.5 4" stroke="#fff" stroke-linecap="round"/></svg>
+            <span>Sound</span>
+          </button>
+          <div id="hint"><span id="hintText">Loading…</span><i id="meter"><b></b></i></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <pre id="debug" hidden></pre>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

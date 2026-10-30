@@ -1,0 +1,212 @@
+/* ───────────────────────── base */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: #f4f4f4;
+  color: #1d1d1d;
+  font-family: "Helvetica Neue", Helvetica, "Inter Tight", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#bg, #bg-fallback {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  display: block;
+}
+#bg-fallback { display: none; }
+.no-gl #bg { display: none; }
+.no-gl #bg-fallback {
+  display: block;
+  height: 87.3vh; /* 782 / 896 */
+  background: url(assets/gradient.jpg) center / cover;
+  filter: brightness(.68);
+  -webkit-mask: radial-gradient(ellipse 86% 75% at 50% 0%, #000 45%, transparent 100%);
+          mask: radial-gradient(ellipse 86% 75% at 50% 0%, #000 45%, transparent 100%);
+}
+
+#hero { position: fixed; inset: 0; overflow: hidden; }
+
+/* Stage is in Figma units (1440×896 frame), scaled by --u.
+   --W / --H are the viewport in stage units (≥ 1440 / ≥ 896). */
+#stage {
+  position: absolute; left: 0; top: 0;
+  width: calc(var(--W) * 1px);
+  height: calc(var(--H) * 1px);
+  transform: scale(var(--u));
+  transform-origin: 0 0;
+}
+
+.layer {
+  position: absolute;
+  width: 1440px; height: 896px;
+  top: calc((var(--H) - 896) * .5px);
+  will-change: transform;
+}
+#copy       { left: 0; }
+#headLayer  { left: calc((var(--W) - 1440) * .5px); perspective: 1400px; }
+#mediaLayer { left: calc((var(--W) - 1440) * 1px); }
+
+/* ───────────────────────── copy */
+.title {
+  position: absolute; left: 80px; top: 348px; width: 460px;
+  margin: 0;
+  font-weight: 500; font-size: 64px; line-height: 64px; letter-spacing: -4.48px;
+  color: #fff;
+}
+.title .line { display: block; white-space: nowrap; }
+.title .dim { color: rgba(255,255,255,.64); }
+.title .word { display: inline-block; }
+
+.btn {
+  position: absolute; left: 80px; top: 508px;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 8px 16px;
+  background: #fff; border-radius: 8px;
+  color: #1d1d1d; text-decoration: none;
+  font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: -1.12px;
+  transition: transform .35s cubic-bezier(.2,.9,.3,1.3), box-shadow .35s;
+}
+.btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 30px -12px rgba(10,30,70,.45); }
+
+/* intro */
+.intro .title .word, .intro .btn {
+  opacity: 0; transform: translateY(26px); filter: blur(8px);
+}
+.title .word, .btn {
+  transition: opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1), filter .9s;
+  transition-delay: calc(var(--d, 0) * 1ms);
+}
+.title .word { transition-property: opacity, transform, filter; }
+
+/* ───────────────────────── head */
+#headWrap {
+  position: absolute; left: 440px; top: 95px; width: 680px; height: 705px;
+  transform-origin: 340px 380px;
+  will-change: transform;
+}
+#head { position: absolute; inset: 0; width: 100%; height: 100%; }
+.intro #headWrap { opacity: 0; }
+#headWrap { transition: opacity 1s ease; }
+#headWrap.shake #head { animation: shake .42s cubic-bezier(.36,.07,.19,.97); }
+@keyframes shake {
+  10%, 90% { transform: translate(-2px, 1px) rotate(-.6deg); }
+  20%, 80% { transform: translate(4px, -2px) rotate(1deg); }
+  30%, 50%, 70% { transform: translate(-6px, 2px) rotate(-1.4deg); }
+  40%, 60% { transform: translate(6px, -1px) rotate(1.4deg); }
+}
+
+/* ───────────────────────── stickers (exact Figma geometry) */
+#stickers { position: absolute; inset: 0; pointer-events: none; }
+.sticker {
+  position: absolute; display: flex; align-items: center; justify-content: center;
+  transform: scale(0); opacity: 0;
+  transition: transform .22s cubic-bezier(.5,0,.75,0), opacity .22s;
+}
+.sticker .rot { position: relative; flex: none; }
+.sticker img { position: absolute; display: block; max-width: none; }
+
+#stOuch  { left: 780px; top: 126px; width: 263.11px; height: 207.76px; transform-origin: 30% 80%; }
+#stOuch .rot { width: 231.912px; height: 155.16px; transform: rotate(-14.34deg); }
+#stOuch img  { inset: 0; width: 100%; height: 100%; }
+
+#stBolt1 { left: 844.8px; top: 624px; width: 99.738px; height: 134.592px; transform-origin: 20% 10%; }
+#stBolt1 .rot { width: 125.787px; height: 86.307px; transform: rotate(83.63deg); }
+#stBolt1 img  { top: -1.47%; left: -.42%; width: 102.07%; height: 102.61%; }
+
+#stBolt2 { left: 796px; top: 672.64px; width: 77.144px; height: 90.746px; transform-origin: 40% 0%; }
+#stBolt2 .rot { width: 76.787px; height: 52.686px; transform: rotate(111.48deg); }
+#stBolt2 img  { top: -2.4%; left: -.69%; width: 103.39%; height: 104.27%; }
+
+.sticker.on {
+  opacity: 1; transform: scale(1);
+  animation: pop .62s cubic-bezier(.2,.9,.25,1) both;
+  animation-delay: var(--pd, 0ms);
+}
+.sticker.on img { animation: wiggle 1.3s ease-in-out infinite alternate; animation-delay: calc(var(--pd, 0ms) + 600ms); }
+#stBolt1.on img, #stBolt2.on img { animation-name: zap; animation-duration: .5s; }
+@keyframes pop {
+  0%   { opacity: 0; transform: scale(0) rotate(-14deg); }
+  40%  { opacity: 1; transform: scale(1.22) rotate(5deg); }
+  62%  { transform: scale(.9) rotate(-2deg); }
+  80%  { transform: scale(1.05) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes wiggle { from { transform: rotate(-2.5deg) scale(1); } to { transform: rotate(2.5deg) scale(1.03); } }
+@keyframes zap    { from { transform: translate(0,0) scale(1); } to { transform: translate(2px,-3px) scale(1.06); } }
+
+/* ───────────────────────── media box */
+#media {
+  position: absolute; left: 1110px; top: 292px; width: 250px; height: 312px;
+  background: #000; border: 1px solid #fff; border-radius: 8px; overflow: hidden;
+  box-shadow: 0 30px 60px -30px rgba(0, 20, 60, .45);
+}
+#cam {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transform: scaleX(-1); opacity: 0; transition: opacity .4s;
+}
+.show-cam #cam { opacity: .28; }
+#skel { position: absolute; inset: 0; width: 100%; height: 100%; }
+#handPlaceholder {
+  position: absolute; left: 104px; top: 91px; width: 104.588px; height: 127px;
+  transition: opacity .5s;
+  animation: breathe 2.4s ease-in-out infinite;
+}
+.has-hand #handPlaceholder { opacity: 0; animation: none; }
+@keyframes breathe { 50% { opacity: .45; transform: translateY(-3px) rotate(-3deg); } }
+
+.chip {
+  position: absolute; top: 7px;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 6px 4px 4px; height: 24px;
+  border: 0; border-radius: 4px;
+  background: rgba(255,255,255,.08);
+  -webkit-backdrop-filter: blur(40px); backdrop-filter: blur(40px);
+  color: #fff;
+  font: 600 12px/16px "PP Pangram Sans", "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -.48px; white-space: nowrap;
+  transition: background .3s, transform .3s cubic-bezier(.2,.9,.3,1.4);
+}
+.chip img, .chip svg { width: 16px; height: 16px; display: block; }
+#hiChip { left: 7px; }
+#hiChip.waving { background: rgba(255,255,255,.26); transform: scale(1.08); }
+#hiChip.waving img { animation: wave .35s ease-in-out infinite alternate; transform-origin: 70% 80%; }
+@keyframes wave { from { transform: rotate(-14deg); } to { transform: rotate(16deg); } }
+
+#soundBtn { right: 7px; cursor: pointer; opacity: .55; }
+#soundBtn:hover { background: rgba(255,255,255,.16); }
+#soundBtn .wave { display: none; }
+#soundBtn[aria-pressed="true"] { opacity: 1; }
+#soundBtn[aria-pressed="true"] .wave { display: inline; }
+#soundBtn[aria-pressed="true"] .slash { display: none; }
+
+#hint {
+  position: absolute; left: 10px; right: 10px; bottom: 10px;
+  font: 400 10px/14px "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing: -.2px; color: #b2b9bd; text-transform: uppercase;
+}
+#hint span { display: block; margin-bottom: 6px; transition: opacity .3s; }
+#meter { display: block; height: 2px; background: rgba(255,255,255,.12); border-radius: 2px; overflow: hidden; }
+#meter b { display: block; height: 100%; width: 100%; background: #fff; transform-origin: 0 50%; transform: scaleX(0); }
+
+/* ───────────────────────── debug */
+#debug {
+  position: fixed; left: 12px; bottom: 12px; margin: 0; padding: 10px 12px;
+  background: rgba(0,0,0,.72); color: #9fe; border-radius: 6px;
+  font: 11px/1.45 "IBM Plex Mono", ui-monospace, monospace; z-index: 10; pointer-events: none;
+}
+
+/* ───────────────────────── portrait / phones */
+/* in portrait the stage is 820 units wide; layers are centred */
+.portrait #copy, .portrait #headLayer, .portrait #mediaLayer { top: 0; left: calc((var(--W) - 1440) * .5px); height: calc(var(--H) * 1px); }
+.portrait .title { left: 720px; top: 110px; transform: translateX(-50%); text-align: center; }
+.portrait .btn   { left: 662px; top: 270px; }
+.portrait #headWrap { left: 380px; top: calc(var(--H) * .5px - 300px); }
+.portrait #stickers { transform: translate(-60px, calc(var(--H) * .5px - 395px)); }
+.portrait #media { left: 860px; top: calc(var(--H) * 1px - 342px); transform: scale(.72); transform-origin: 100% 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sticker.on img, #handPlaceholder { animation: none; }
+}
