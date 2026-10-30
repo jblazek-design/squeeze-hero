@@ -137,6 +137,15 @@ body {
 @keyframes wiggle { from { transform: rotate(-2.5deg) scale(1); } to { transform: rotate(2.5deg) scale(1.03); } }
 @keyframes zap    { from { transform: translate(0,0) scale(1); } to { transform: translate(2px,-3px) scale(1.06); } }
 
+#stHi { left: 352px; top: 168px; width: 240px; height: 170px; transform-origin: 75% 95%; }
+#stHi .rot { width: 240px; height: 170px; transform: rotate(-8deg); }
+#stHi svg { display: block; overflow: visible; }
+#stHi.on .rot { animation: hiBob .5s ease-in-out .7s infinite alternate; }
+@keyframes hiBob { from { transform: rotate(-8deg) translateY(0); } to { transform: rotate(-3deg) translateY(-6px); } }
+
+/* confetti layer */
+#fx { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 5; }
+
 /* ───────────────────────── media box */
 #media {
   position: absolute; left: 1110px; top: 292px; width: 250px; height: 312px;

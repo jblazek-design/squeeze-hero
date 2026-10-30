@@ -13,20 +13,23 @@ Musí to běžet ze serveru (localhost nebo jakýkoliv HTTPS hosting). Když ote
 | Gesto | Co se stane |
 |---|---|
 | Otevřená dlaň | Normální hlava (Step 1 z Figmy) |
-| Pomalu zmáčkni do pěsti | Hlava se postupně mačká do papírové koule (121 snímků z videa), zní mačkání papíru |
+| Pomalu zmáčkni do pěsti | Hlava se postupně mačká do papírové koule (121 snímků z videa), zní mačkání papíru. Napůl uvolněná ruka nedělá nic, mačká se až opravdová pěst. |
 | Úplně zmáčknutá | Vyskočí OUCH + blesky s „pop“ zvukem, hlava se zatřese (Step 2) |
 | Znovu otevři | Hlava se rozbalí, samolepky zmizí, „boing“ |
 | Pohyb rukou | Celá stránka se jemně hýbe (parallax): pozadí, hlava, text a box v různé hloubce |
-| Zamávání | Hlava se zakývá, chip „Say Hi!“ zamává, krátký zvuk |
+| Zamávání (dlaní nebo kýváním v zápěstí) | Hlava se natočí k tobě a kývne, vystřelí konfety, vyskočí bublina „AHOJ!“, chip „Say Hi!“ zamává. Během mávání se hlava nemačká. |
 
 Pozadí je živý WebGL gradient z obrázku z Figmy: pomalu teče, při zmáčknutí se stáčí do hlavy a při mávání se vlní.
 
-Záložní ovládání: **podržení myši / mezerníku** = zmáčknutí, pohyb myši = parallax.
+Záložní ovládání: **podržení myši / mezerníku** = zmáčknutí, pohyb myši = parallax, rychlé zatřepání myší do stran = zamávání.
 Klávesy: **S** zvuk · **C** ukázat obraz z kamery v boxu · **M** jen myš · **D** živé hodnoty pro ladění.
 
 ## Ladění (`app.js` → `CFG` nahoře)
 - `openLo` / `openHi`: rozsah otevřenosti ruky (D ukáže tvoje živé `ratio`). Rozsah se během používání sám mírně přizpůsobuje.
 - `follow`: jak rychle hlava sleduje ruku.
+- `squeezeStart` / `squeezeFull`: od jak zavřené ruky se hlava začne mačkat a kdy je úplně zmačkaná (0 = otevřená, 1 = pěst).
+- `waveSpeed`, `waveSwings`, `waveWindow`: citlivost mávání (rychlost prstů, počet švihů, časové okno).
+- `confettiCooldown`: minimální pauza mezi dávkami konfet.
 - `popOn` / `popOff`: kdy samolepky vyskočí / zmizí.
 - `parallax`: síla parallaxu (1 = výchozí, 0 = vypnuto).
 - `smileSrc`: obrázek s úsměvem, který se ukáže při mávání (viz níže).

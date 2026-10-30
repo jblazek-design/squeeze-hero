@@ -6,7 +6,7 @@
   <title>@blazek.design — Squeeze me</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -38,6 +38,21 @@
           <div class="sticker" id="stBolt1">
             <div class="rot"><img src="assets/bolt-1.svg" alt="" draggable="false"></div>
           </div>
+          <div class="sticker" id="stHi">
+            <div class="rot">
+              <svg viewBox="0 0 240 170" width="240" height="170" aria-label="Ahoj!">
+                <defs>
+                  <path id="hiShape" d="M24 72C18 32 70 14 120 16c56-2 102 16 100 56-2 34-36 52-80 52l40 34-68-34c-48 2-84-14-88-52z"/>
+                </defs>
+                <use href="#hiShape" fill="none" stroke="#000" stroke-width="19" stroke-linejoin="round"/>
+                <use href="#hiShape" fill="#fff" stroke="#fff" stroke-width="15" stroke-linejoin="round"/>
+                <use href="#hiShape" fill="#fff" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
+                <text x="121" y="94" text-anchor="middle" transform="rotate(-6 121 72)"
+                  font-family="Bangers, 'Luckiest Guy', Impact, sans-serif" font-size="64" letter-spacing="2"
+                  fill="#FE3A39" stroke="#000" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke">AHOJ!</text>
+              </svg>
+            </div>
+          </div>
           <div class="sticker" id="stBolt2">
             <div class="rot"><img src="assets/bolt-2.svg" alt="" draggable="false"></div>
           </div>
@@ -61,6 +76,7 @@
     </div>
   </main>
 
+  <canvas id="fx" aria-hidden="true"></canvas>
   <pre id="debug" hidden></pre>
 
   <script type="module" src="app.js"></script>

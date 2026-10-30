@@ -24,6 +24,14 @@ const CFG = {
   openLo: 1.05,          // ≈ fist
   openHi: 1.80,          // ≈ open hand
   follow: 7,             // how fast the head follows your hand
+  // squeeze only kicks in for a real fist: closure below squeezeStart does nothing
+  squeezeStart: 0.40,    // 0 = fully open … 1 = fist
+  squeezeFull: 0.93,
+  // wave = side-to-side swings of the fingertips (palm shift or wrist rotation)
+  waveSpeed: 0.75,       // fingertip speed (frame widths / s) that counts as a swing
+  waveSwings: 3,         // direction changes needed…
+  waveWindow: 1500,      // …within this many ms
+  confettiCooldown: 2200,
   popOn: 0.86,           // stickers pop when squeeze passes this…
   popOff: 0.55,          // …and hide when it drops below this
   parallax: 1,           // overall parallax strength
@@ -41,6 +49,8 @@ const cam = $('#cam'), skel = $('#skel'), sctx = skel.getContext('2d');
 const hintText = $('#hintText'), meterBar = $('#meter b'), debugEl = $('#debug');
 const hiChip = $('#hiChip'), soundBtn = $('#soundBtn');
 const stickers = [$('#stOuch'), $('#stBolt1'), $('#stBolt2')];
+const hiBubble = $('#stHi');
+const fx = $('#fx'), fctx = fx.getContext('2d');
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const clamp01 = v => clamp(v, 0, 1);
@@ -56,6 +66,7 @@ const S = {
   par: { x: 0, y: 0 }, handPar: { x: 0, y: 0 }, mousePar: { x: 0, y: 0 }, mouseActive: false,
   vx: 0, mvx: 0, lastX: null, lastHandT: 0,
   flips: [], lastSign: 0, waveUntil: 0, wave: 0, wasWaving: false,
+  tipX: null, tipV: 0, greet: 0, lastConfetti: -1e9, mflips: [], mSign: 0,
   wob: { x: 0, v: 0 }, bounce: { x: 0, v: 0 },
   popped: false, crumpledOnce: false,
   hand: null, handAt: -1e9, ratio: null, lo: CFG.openLo, hi: CFG.openHi,
@@ -85,6 +96,8 @@ function layout() {
   bgCanvas.width = Math.max(2, Math.round(vw * bgScale));
   bgCanvas.height = Math.max(2, Math.round(vh * bgScale));
   if (gl) gl.viewport(0, 0, bgCanvas.width, bgCanvas.height);
+  fx.width = Math.round(vw * dpr); fx.height = Math.round(vh * dpr);
+  S.dpr = dpr;
   S.drawnIdx = -1;
 }
 addEventListener('resize', layout);
@@ -321,13 +334,20 @@ function boingSound() {
 function hiSound() {
   if (!A.on) return;
   const c = A.ctx, t = c.currentTime;
-  [[660, 0], [990, 0.09]].forEach(([f, d]) => {
+  // confetti "pff" (filtered noise) + little rising chime
+  const n = c.createBufferSource(); n.buffer = A.noise;
+  const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.9;
+  bp.frequency.setValueAtTime(900, t); bp.frequency.exponentialRampToValueAtTime(3500, t + 0.15);
+  const ng = c.createGain(); ng.gain.setValueAtTime(0.0001, t);
+  ng.gain.exponentialRampToValueAtTime(0.55, t + 0.01); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.19);
+  n.connect(bp).connect(ng).connect(A.master); n.start(t); n.stop(t + 0.2);
+  [[784, 0.08], [988, 0.16], [1319, 0.24]].forEach(([f, d]) => {
     const o = c.createOscillator(), g = c.createGain();
-    o.type = 'sine'; o.frequency.setValueAtTime(f, t + d);
+    o.type = 'triangle'; o.frequency.setValueAtTime(f, t + d);
     g.gain.setValueAtTime(0.0001, t + d);
-    g.gain.exponentialRampToValueAtTime(0.25, t + d + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.22);
-    o.connect(g).connect(A.master); o.start(t + d); o.stop(t + d + 0.25);
+    g.gain.exponentialRampToValueAtTime(0.18, t + d + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.3);
+    o.connect(g).connect(A.master); o.start(t + d); o.stop(t + d + 0.32);
   });
 }
 function updateCrumpleAudio() {
@@ -346,6 +366,7 @@ soundBtn.addEventListener('click', async e => {
 // ─────────────────────────────── stickers
 function pop() {
   S.popped = true; S.crumpledOnce = true;
+  hiBubble.classList.remove('on');
   stickers.forEach((el, i) => {
     const d = [0, 110, 200][i];
     el.style.setProperty('--pd', d + 'ms');
@@ -358,6 +379,66 @@ function pop() {
 function unpop() {
   S.popped = false;
   stickers.forEach(el => el.classList.remove('on'));
+}
+
+// ─────────────────────────────── greeting: confetti + AHOJ bubble
+const CONFETTI_COLORS = ['#FE3A39', '#FFFFFF', '#FFD23F', '#3BA1FF', '#8CE0FF', '#1D1D1D', '#FF8FB1'];
+const confetti = [];
+function burst(x, y, n, spread = 1) {
+  const k = S.u;
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.25 * spread;
+    const v = (520 + Math.random() * 760) * k;
+    confetti.push({
+      x: x + (Math.random() - 0.5) * 120 * k, y: y + (Math.random() - 0.5) * 60 * k,
+      vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+      w: (7 + Math.random() * 8) * k, h: (10 + Math.random() * 12) * k,
+      rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 14,
+      flip: Math.random() * Math.PI * 2, vf: 6 + Math.random() * 10,
+      sway: Math.random() * Math.PI * 2,
+      shape: Math.random() < 0.22 ? 'circle' : Math.random() < 0.35 ? 'strip' : 'rect',
+      color: CONFETTI_COLORS[(Math.random() * CONFETTI_COLORS.length) | 0],
+      life: 0, ttl: 2.6 + Math.random() * 1.6,
+    });
+  }
+}
+function drawConfetti(dt) {
+  const d = S.dpr || 1;
+  if (!confetti.length) { if (fx._dirty) { fctx.clearRect(0, 0, fx.width, fx.height); fx._dirty = false; } return; }
+  fx._dirty = true;
+  fctx.setTransform(1, 0, 0, 1, 0, 0);
+  fctx.clearRect(0, 0, fx.width, fx.height);
+  const G = 1500 * S.u, H = innerHeight;
+  for (let i = confetti.length - 1; i >= 0; i--) {
+    const c = confetti[i];
+    c.life += dt;
+    const drag = Math.pow(c.vy > 0 ? 0.08 : 0.35, dt);   // flutters down slowly
+    c.vx *= drag; c.vy = c.vy * drag + G * dt;
+    c.x += (c.vx + Math.sin(c.sway + c.life * 4) * 60 * S.u) * dt;
+    c.y += c.vy * dt;
+    c.rot += c.vr * dt; c.flip += c.vf * dt;
+    if (c.life > c.ttl || c.y > H + 40) { confetti.splice(i, 1); continue; }
+    const alpha = clamp01((c.ttl - c.life) / 0.5);
+    fctx.setTransform(d, 0, 0, d, c.x * d, c.y * d);
+    fctx.rotate(c.rot);
+    fctx.scale(1, Math.cos(c.flip));
+    fctx.globalAlpha = alpha;
+    fctx.fillStyle = c.color;
+    if (c.shape === 'circle') { fctx.beginPath(); fctx.arc(0, 0, c.w * 0.45, 0, Math.PI * 2); fctx.fill(); }
+    else if (c.shape === 'strip') fctx.fillRect(-c.w * 0.18, -c.h * 0.7, c.w * 0.36, c.h * 1.4);
+    else fctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+  }
+  fctx.globalAlpha = 1;
+}
+function greet() {
+  const r = headWrap.getBoundingClientRect();
+  const x = r.left + r.width * 0.5, y = r.top + r.height * 0.16;
+  burst(x, y, 150);
+  setTimeout(() => burst(x - r.width * 0.32, y + r.height * 0.2, 60, 0.8), 160);
+  setTimeout(() => burst(x + r.width * 0.32, y + r.height * 0.2, 60, 0.8), 300);
+  hiBubble.style.setProperty('--pd', '60ms');
+  hiBubble.classList.remove('on'); void hiBubble.offsetWidth; hiBubble.classList.add('on');
+  hiSound();
 }
 
 // ─────────────────────────────── input: mouse / keys
@@ -378,6 +459,10 @@ addEventListener('pointermove', e => {
   if (lastMouse) {
     const dt = Math.max(8, now - lastMouse.t) / 1000;
     S.mvx = lerp(S.mvx, clamp((x - lastMouse.x) / dt * 0.25, -3, 3), 0.5);
+    const sg = Math.abs(S.mvx) > 0.9 ? Math.sign(S.mvx) : 0;
+    if (sg && sg !== S.mSign) { if (S.mSign) S.mflips.push(now); S.mSign = sg; }
+    S.mflips = S.mflips.filter(t => now - t < 1200);
+    if (S.mflips.length >= 4 && now - S.handAt > 450) S.waveUntil = now + 700;
   }
   lastMouse = { x, t: now };
 });
@@ -450,7 +535,9 @@ function onHand(lm, now) {
   if (ratio > S.hi) S.hi = lerp(S.hi, ratio, 0.04);
   if (S.hi - S.lo < 0.45) S.hi = S.lo + 0.45;
   const open = clamp01((ratio - S.lo) / (S.hi - S.lo));
-  S.handSq = 1 - open;
+  S.open = open;
+  // dead zone: a relaxed / half-open hand does nothing, only a real fist crumples
+  const sq = smooth(CFG.squeezeStart, CFG.squeezeFull, 1 - open);
 
   // palm centre → parallax (mirrored like a selfie)
   const ids = [0, 5, 9, 13, 17];
@@ -459,17 +546,25 @@ function onHand(lm, now) {
   S.handPar.x = clamp((cx - 0.5) * 2.4, -1, 1);
   S.handPar.y = clamp((cy - 0.5) * 2.4, -1, 1);
 
-  // horizontal velocity → wobble + wave detection
+  // velocities: palm (→ wobble) and fingertips (→ wave; catches wrist rotation too)
+  const tx = 1 - (lm[8].x + lm[12].x + lm[16].x) / 3;
   if (S.lastX != null && now - S.lastHandT < 200) {
     const dt = Math.max(8, now - S.lastHandT) / 1000;
-    const v = clamp((cx - S.lastX) / dt, -4, 4);
-    S.vx = lerp(S.vx, v, 0.45);
-    const sign = Math.abs(S.vx) > 0.7 ? Math.sign(S.vx) : 0;
-    if (sign && sign !== S.lastSign) { S.flips.push(now); S.lastSign = sign; }
+    S.vx = lerp(S.vx, clamp((cx - S.lastX) / dt, -4, 4), 0.45);
+    S.tipV = lerp(S.tipV, clamp((tx - S.tipX) / dt, -6, 6), 0.5);
+    const sign = Math.abs(S.tipV) > CFG.waveSpeed ? Math.sign(S.tipV) : 0;
+    if (sign && sign !== S.lastSign) {
+      if (S.lastSign) S.flips.push(now);
+      S.lastSign = sign;
+    }
   }
-  S.flips = S.flips.filter(t => now - t < 1400);
-  if (S.flips.length >= 3 && open > 0.5) S.waveUntil = now + 900;
-  S.lastX = cx; S.lastHandT = now;
+  S.flips = S.flips.filter(t => now - t < CFG.waveWindow);
+  if (S.flips.length >= CFG.waveSwings && open > 0.45) S.waveUntil = now + 800;
+  S.lastX = cx; S.tipX = tx; S.lastHandT = now;
+
+  // while the hand is swinging, never crumple (motion blur makes fingers look shorter)
+  const moving = now < S.waveUntil + 400 || Math.abs(S.tipV) > 1.2;
+  S.handSq = moving ? Math.min(sq, S.handSq) : sq;
 
   S.hand = lm; S.handAt = now;
 }
@@ -532,11 +627,17 @@ function tick(now) {
   S.bounce.v += (-190 * S.bounce.x - 9 * S.bounce.v) * dt;
   S.bounce.x += S.bounce.v * dt;
 
-  // wave
-  const waving = now < S.waveUntil;
+  // wave → greet: head turns to you and nods, confetti, AHOJ bubble
+  const waving = now < S.waveUntil && S.t < 0.3;
   S.wave = damp(S.wave, waving ? 1 : 0, 3, dt);
-  if (waving && !S.wasWaving) { hiSound(); S.bounce.v += 0.9; }
+  S.greet = damp(S.greet, waving ? 1 : 0, waving ? 5 : 2.2, dt);
+  if (waving && !S.wasWaving) {
+    S.bounce.v += 0.9;
+    if (now - S.lastConfetti > CFG.confettiCooldown) { S.lastConfetti = now; greet(); }
+  }
   S.wasWaving = waving;
+  if (waving) clearTimeout(S.hiOff), S.hiOff = null;
+  else if (hiBubble.classList.contains('on') && !S.hiOff) S.hiOff = setTimeout(() => { hiBubble.classList.remove('on'); S.hiOff = null; }, 900);
   hiChip.classList.toggle('waving', waving);
   S.smile = damp(S.smile, waving && S.t < 0.25 ? 1 : 0, 5, dt);
 
@@ -551,10 +652,15 @@ function tick(now) {
   const p = S.par, u = 1;
   const float = Math.sin(S.time * 1.15) * 4 * (1 - S.t * 0.6);
   const squish = S.t * 0.03 * Math.sin(S.time * 30) * clamp01(Math.abs(S.speed));
+  // greeting: turn the face towards the viewer, friendly tilt + a little nod
+  const g = S.greet;
+  const nod = g * Math.sin(S.time * 7) * 3;
+  const turn = g * 18 + g * Math.sin(S.time * 3.2) * 3;
   headWrap.style.transform =
-    `translate3d(${(p.x * 24).toFixed(2)}px, ${(p.y * 16 + float).toFixed(2)}px, 0) ` +
-    `rotateY(${(p.x * 10).toFixed(2)}deg) rotateX(${(-p.y * 7).toFixed(2)}deg) rotateZ(${S.wob.x.toFixed(2)}deg) ` +
-    `scale(${(1 + S.bounce.x + squish).toFixed(4)})`;
+    `translate3d(${(p.x * 24 + g * 10).toFixed(2)}px, ${(p.y * 16 + float - g * 8).toFixed(2)}px, 0) ` +
+    `rotateY(${(p.x * 10 + turn).toFixed(2)}deg) rotateX(${(-p.y * 7 + nod).toFixed(2)}deg) ` +
+    `rotateZ(${(S.wob.x - g * 6).toFixed(2)}deg) ` +
+    `scale(${(1 + S.bounce.x + squish + g * 0.02).toFixed(4)})`;
   stickersEl.style.translate = `${(p.x * 36).toFixed(2)}px ${(p.y * 24 + float * 0.6).toFixed(2)}px`;
   copyEl.style.translate = `${(-p.x * 12 * u).toFixed(2)}px ${(-p.y * 7).toFixed(2)}px`;
   mediaLayer.style.translate = `${(-p.x * 7).toFixed(2)}px ${(-p.y * 5).toFixed(2)}px`;
@@ -562,13 +668,14 @@ function tick(now) {
   drawHead();
   drawBG();
   drawSkeleton(live);
+  drawConfetti(dt);
 
   // ui
   meterBar.style.transform = `scaleX(${S.t.toFixed(3)})`;
   let hint;
   if (S.loaded < CFG.frames) hint = `Loading ${Math.round(S.loaded / CFG.frames * 100)}%`;
   else if (live && S.popped) hint = 'Ouch! Open to fix it';
-  else if (live && waving) hint = 'Hi there!';
+  else if (live && waving) hint = 'Ahoj!';
   else if (live) hint = 'Squeeze your hand';
   else if (S.input === 'mouse') hint = 'Mouse mode · hold click';
   else if (S.camStatus === 'starting') hint = 'Allow camera access';
@@ -600,7 +707,7 @@ function firstFrameReady() {
 }
 
 // test hook (used for automated checks; harmless in production)
-window.__sq = { S, CFG, onHand, A };
+window.__sq = { S, CFG, onHand, A, confetti };
 
 // ─────────────────────────────── boot
 initGL();
