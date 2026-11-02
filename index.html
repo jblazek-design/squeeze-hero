@@ -3,18 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@blazek.design — Squeeze me</title>
+  <title>Jakub Blažek — Designer &amp; Art Director · @blazek.design</title>
+  <meta name="description" content="Brand identity, websites, apps &amp; art direction by Jakub Blažek (@blazek.design). Squeeze the head.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <!-- animated gradient (WebGL) -->
-  <canvas id="bg" aria-hidden="true"></canvas>
-  <div id="bg-fallback" aria-hidden="true"></div>
+<body id="top">
+  <!-- ───────── nav (appears after the hero) -->
+  <header id="nav">
+    <a class="nav-logo" href="#top" aria-label="Top">b.<i></i></a>
+    <nav class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#services">Services</a>
+      <a href="#webdesigner">Kurz</a>
+      <button type="button" data-drawer="contact">Contact</button>
+    </nav>
+  </header>
 
-  <main id="hero">
+  <section id="hero" aria-label="Intro">
+    <!-- animated gradient (WebGL) -->
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <div id="bg-fallback" aria-hidden="true"></div>
+
     <div id="stage">
       <!-- left: copy -->
       <div id="copy" class="layer">
@@ -65,20 +77,239 @@
           <video id="cam" playsinline muted></video>
           <canvas id="skel"></canvas>
           <img id="handPlaceholder" src="assets/hand-skeleton.svg" alt="" draggable="false">
-          <div class="chip" id="hiChip"><img src="assets/hand-icon.svg" alt=""><span>Say Hi!</span></div>
+          <button class="chip" id="hiChip" type="button" data-drawer="contact" title="Say hi – contact"><img src="assets/hand-icon.svg" alt=""><span>Say Hi!</span></button>
           <button class="chip" id="soundBtn" type="button" aria-pressed="false" title="Sound (S)">
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 6h2.2L8.6 3.2v9.6L5.2 10H3z" fill="none" stroke="#fff" stroke-linejoin="round"/><path class="wave" d="M10.6 5.6a3.2 3.2 0 0 1 0 4.8M12.3 4a5.6 5.6 0 0 1 0 8" fill="none" stroke="#fff" stroke-linecap="round"/><path class="slash" d="M10.5 6l3.5 4M14 6l-3.5 4" stroke="#fff" stroke-linecap="round"/></svg>
             <span>Sound</span>
           </button>
-          <div id="hint"><span id="hintText">Loading…</span><i id="meter"><b></b></i></div>
+          <div id="hint"><span id="hintText">Loading…</span><span class="legend">☝ 1 finger · click &nbsp;✌ 2 · scroll</span><i id="meter"><b></b></i></div>
         </div>
       </div>
     </div>
+    <div class="scroll-cue" aria-hidden="true"><span>Scroll</span><i></i></div>
+  </section>
+
+
+  <main id="page">
+    <!-- ───────── intro -->
+    <section id="about" class="sec">
+      <div class="wrap center">
+        <p class="mono reveal">Jakub Blažek — Designer &amp; Art Director</p>
+        <h2 class="intro-h reveal"><span class="dim">I combine my creativity &amp; experience</span><br>to simplify complex things</h2>
+        <p class="facts reveal"><span>8y of experience</span><span>120+ clients</span><span>2 400+ students</span><span>Seen by 800k+ daily users</span></p>
+        <div class="btns reveal"><button class="b-lime" type="button" data-drawer="contact">Start a project</button><a class="b-gray" href="#work">See the work</a></div>
+      </div>
+      <div class="logos reveal" aria-label="Trusted by">
+        <p class="label">Trusted by</p>
+        <div class="marquee"><div class="marquee-track"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f05c573cd3ed650e0_bidli.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f541ed614518a0d1c_allrisk.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e822d0b81f661ff122ae_LORO%20ORO-1.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81fa6d6f6b16334787d_Bluefield.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f29bb49e17c0e4ac7_alfaclassic.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82592da64351c79df87_WWF.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82380e75edaff0fb873_niceboy.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82018cdcffc95fd8176_Haier.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f29bb49e17c0e4add_cargibilt.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f119d3b266b3bdb07_BON.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f4b06e0c3cf18f9c9_ClickPro.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81fdfa9e19effe4af56_cutegory.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f05c573cd3ed650e0_bidli.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f541ed614518a0d1c_allrisk.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e822d0b81f661ff122ae_LORO%20ORO-1.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81fa6d6f6b16334787d_Bluefield.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f29bb49e17c0e4ac7_alfaclassic.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82592da64351c79df87_WWF.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82380e75edaff0fb873_niceboy.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82018cdcffc95fd8176_Haier.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f29bb49e17c0e4add_cargibilt.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f119d3b266b3bdb07_BON.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81f4b06e0c3cf18f9c9_ClickPro.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e81fdfa9e19effe4af56_cutegory.svg" alt="" loading="lazy" draggable="false"></div></div>
+        <div class="marquee rev"><div class="marquee-track"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8206ec376475aa04c9e_Gorenje.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82184c7c4f49b968dc8_dell.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8214544c59727ac3a27_Insta360.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8231637ce85dc2ff747_Socialmind.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e822d0a7ee0ca75c8137_Luumo.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e823a4730a1a1e2e1990_svis%CC%8Ct%CC%8C.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8226838b2f02cc8b7f6_Lucid.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8232b29f32c6c003f4c_Svijany.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e824c89f38d35102a1c0_TOMAS%20ARSOV.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82325c26779dc2a7d29_SMART%20EMAILING.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82402373a2fa267a066_valxon.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985ec62127ef0449c60361d_Perfo.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8206ec376475aa04c9e_Gorenje.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82184c7c4f49b968dc8_dell.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8214544c59727ac3a27_Insta360.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8231637ce85dc2ff747_Socialmind.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e822d0a7ee0ca75c8137_Luumo.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e823a4730a1a1e2e1990_svis%CC%8Ct%CC%8C.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8226838b2f02cc8b7f6_Lucid.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e8232b29f32c6c003f4c_Svijany.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e824c89f38d35102a1c0_TOMAS%20ARSOV.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82325c26779dc2a7d29_SMART%20EMAILING.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985e82402373a2fa267a066_valxon.svg" alt="" loading="lazy" draggable="false"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6985ec62127ef0449c60361d_Perfo.svg" alt="" loading="lazy" draggable="false"></div></div>
+      </div>
+    </section>
+
+    <!-- ───────── work -->
+    <section id="work" class="sec">
+      <div class="wrap">
+        <header class="s-head"><p class="label reveal">Featured work</p><h2 class="reveal">Brands &amp; products used<br>by hundreds of thousands</h2></header>
+        <div class="w-grid">
+        <a class="w-card reveal" href="https://blazek-design.webflow.io/portfolio" target="_blank" rel="noopener" style="--i:0">
+          <div class="w-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6ad3fd39e4f7b270453171a7_card-nda-locked.avif" alt="Secret project – project preview" loading="lazy" draggable="false"><span class="w-view">View ↗</span></div>
+          <p class="w-title"><b>Secret project</b> Lead UI/UX designer for a Fortune 50 company platform used by hundreds of thousands daily</p>
+          <div class="chips"><span class="chip-tag">UI/UX lead</span><span class="chip-tag">400k+ daily users</span><span class="chip-tag">Worldwide</span></div>
+        </a>
+        <a class="w-card reveal" href="https://blazek-design.webflow.io/portfolio" target="_blank" rel="noopener" style="--i:1">
+          <div class="w-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6ad3f8cf3b2e939a24cb9094_card-socialmind.avif" alt="Socialmind – project preview" loading="lazy" draggable="false"><span class="w-view">View ↗</span></div>
+          <p class="w-title"><b>Socialmind</b> #1 social media agency in CZ &amp; SK</p>
+          <div class="chips"><span class="chip-tag">Identity &amp; UI/UX</span><span class="chip-tag">Art Director</span><span class="chip-tag">89k+ followers</span></div>
+        </a>
+        <a class="w-card reveal" href="https://blazek-design.webflow.io/projects-svist" target="_blank" rel="noopener" style="--i:0">
+          <div class="w-media"><span class="w-case">Case study</span><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6ad3f8a2c455d8c90a25dead_card-svist.avif" alt="Svišť – project preview" loading="lazy" draggable="false"><span class="w-view">View ↗</span></div>
+          <p class="w-title"><b>Svišť</b> Most downloaded app in Slovakia (June 2023)</p>
+          <div class="chips"><span class="chip-tag">Web &amp; App</span><span class="chip-tag">Visual Identity</span></div>
+        </a>
+        <a class="w-card reveal" href="https://blazek-design.webflow.io/portfolio" target="_blank" rel="noopener" style="--i:1">
+          <div class="w-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6ad3f8880ffe5ddd6c45eb49_card-bodhi.avif" alt="Bodhi Pediatrics – project preview" loading="lazy" draggable="false"><span class="w-view">View ↗</span></div>
+          <p class="w-title"><b>Bodhi Pediatrics</b> </p>
+          <div class="chips"><span class="chip-tag">UI/UX</span><span class="chip-tag">New York, USA</span></div>
+        </a>
+        <a class="w-card reveal" href="https://blazek-design.webflow.io/portfolio" target="_blank" rel="noopener" style="--i:0">
+          <div class="w-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6ad3f888e4f7b270452fb7fd_card-arsov.avif" alt="TOMAS ARSOV – project preview" loading="lazy" draggable="false"><span class="w-view">View ↗</span></div>
+          <p class="w-title"><b>TOMAS ARSOV</b> </p>
+          <div class="chips"><span class="chip-tag">Off-line &amp; on-line</span><span class="chip-tag">Visual Identity</span></div>
+        </a>
+        <a class="w-card reveal" href="https://blazek-design.webflow.io/projects-luumo" target="_blank" rel="noopener" style="--i:1">
+          <div class="w-media"><span class="w-case">Case study</span><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6ad3f889059c0ee238ab3ae2_card-luumo.avif" alt="Luumo – project preview" loading="lazy" draggable="false"><span class="w-view">View ↗</span></div>
+          <p class="w-title"><b>Luumo</b> Building a lifestyle brand for people chasing their dream career</p>
+          <div class="chips"><span class="chip-tag">Art Director</span><span class="chip-tag">UI/UX</span><span class="chip-tag">10k+ students</span></div>
+        </a>
+        </div>
+        <div class="btns center reveal"><a class="b-lime" href="https://blazek-design.webflow.io/portfolio" target="_blank" rel="noopener">Show more projects</a><button class="b-gray" type="button" data-drawer="contact">Start a project</button></div>
+      </div>
+    </section>
+
+    <!-- ───────── services -->
+    <section id="services" class="sec">
+      <div class="wrap">
+        <header class="s-head"><p class="label reveal">Services</p><h2 class="reveal">Identity, web &amp; product<br>under one roof</h2></header>
+        <div class="s-grid">
+        <button class="s-tile reveal" type="button" data-drawer="contact" data-topic="Brand &amp; Visual Identity" style="--i:0">
+          <span class="s-title">Brand &amp; Visual Identity</span><span class="s-go">Start a project ↗</span>
+          <span class="chips"><span class="chip-tag white">Logo</span><span class="chip-tag white">Identity</span><span class="chip-tag white">Brand manual</span></span>
+        </button>
+        <button class="s-tile reveal" type="button" data-drawer="contact" data-topic="Websites" style="--i:1">
+          <span class="s-title">Websites</span><span class="s-go">Start a project ↗</span>
+          <span class="chips"><span class="chip-tag white">Webflow</span><span class="chip-tag white">Landing pages</span><span class="chip-tag white">Conversion</span></span>
+        </button>
+        <button class="s-tile reveal" type="button" data-drawer="contact" data-topic="Apps &amp; UI/UX" style="--i:2">
+          <span class="s-title">Apps &amp; UI/UX</span><span class="s-go">Start a project ↗</span>
+          <span class="chips"><span class="chip-tag white">Product design</span><span class="chip-tag white">Prototypes</span></span>
+        </button>
+        <button class="s-tile reveal" type="button" data-drawer="contact" data-topic="Art Direction" style="--i:3">
+          <span class="s-title">Art Direction</span><span class="s-go">Start a project ↗</span>
+          <span class="chips"><span class="chip-tag white">Campaigns</span><span class="chip-tag white">Social media</span></span>
+        </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── Webdesigner pre-registration -->
+    <section id="webdesigner" class="sec">
+      <div class="wrap">
+        <div class="wd reveal">
+          <div class="wd-glow" aria-hidden="true"></div>
+          <div class="wd-top">
+            <span class="wd-badge"><i></i>Předregistrace otevřená</span>
+            <span class="wd-badge ghost">Již 3× vyprodaný program</span>
+          </div>
+          <h2>Webdesigner<span>.</span></h2>
+          <p class="wd-lead">Jediný program, který potřebuješ, abys začal vydělávat tvorbou webů. Naučím tě AI workflow, design i prodej — od prvního klienta až po finální předání.</p>
+          <div class="wd-stats">
+            <div><b>250+</b><span>studentů prošlo programem</span></div>
+            <div><b>170+</b><span>lekcí v 7 částech</span></div>
+            <div><b>200+</b><span>v komunitě webdesignerů a grafiků</span></div>
+          </div>
+          <div class="wd-cta">
+            <button class="b-lime big" type="button" data-drawer="waitlist">Předregistrovat se <span>↗</span></button>
+            <a class="b-glass big" href="https://www.education.socialmind.cz/kurzy/webdesigner" target="_blank" rel="noopener">Co je v programu</a>
+          </div>
+          <div class="wd-wins marquee"><div class="marquee-track"><span class="win"><b>Matyáš H.</b>200 000 Kč ještě během kurzu</span><span class="win"><b>Dan &amp; David</b>160 000 Kč za 30 dní</span><span class="win"><b>Míša</b>Z 360 000 na 480 000 Kč ročně</span><span class="win"><b>Tadeáš J.</b>Vlastní appka a 4 000 uživatelů za týden</span><span class="win"><b>Denisa B.</b>60 000 Kč měsíčně z grafiky</span><span class="win"><b>Natálie V.</b>Klient na kompletní identitu, logo i web</span><span class="win"><b>Evča</b>3 klienti ještě během kurzu</span><span class="win"><b>Emma K.</b>První velká zakázka: vizuál celé výstavy</span><span class="win"><b>Matyáš H.</b>200 000 Kč ještě během kurzu</span><span class="win"><b>Dan &amp; David</b>160 000 Kč za 30 dní</span><span class="win"><b>Míša</b>Z 360 000 na 480 000 Kč ročně</span><span class="win"><b>Tadeáš J.</b>Vlastní appka a 4 000 uživatelů za týden</span><span class="win"><b>Denisa B.</b>60 000 Kč měsíčně z grafiky</span><span class="win"><b>Natálie V.</b>Klient na kompletní identitu, logo i web</span><span class="win"><b>Evča</b>3 klienti ještě během kurzu</span><span class="win"><b>Emma K.</b>První velká zakázka: vizuál celé výstavy</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── community -->
+    <section id="community" class="sec">
+      <div class="wrap">
+        <header class="s-head"><p class="label reveal">Community</p><h2 class="reveal">Teaching design to<br>thousands of creatives</h2></header>
+        <div class="c-grid">
+        <button class="c-tile reveal" data-drawer="waitlist" type="button" style="--i:0">
+          <span class="c-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6adf235b00e8b66e4264163e_home-community-courses.jpg" alt="Graphic &amp; Web Designer" loading="lazy" draggable="false"></span>
+          <span class="c-title">Graphic &amp; Web Designer</span>
+          <span class="chips"><span class="chip-tag">Courses by me</span><span class="chip-tag">270+ students</span></span>
+        </button>
+        <a class="c-tile reveal" href="https://socialmind.cz" target="_blank" rel="noopener" style="--i:1">
+          <span class="c-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6adf235b11e4608214904bce_home-community-ndf.jpg" alt="New Design File" loading="lazy" draggable="false"></span>
+          <span class="c-title">New Design File</span>
+          <span class="chips"><span class="chip-tag">Free course by me</span><span class="chip-tag">2,1k+ students</span></span>
+        </a>
+        <a class="c-tile reveal" href="https://www.instagram.com/blazek.design/" target="_blank" rel="noopener" style="--i:2">
+          <span class="c-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6adf235b00e8b66e42641650_home-community-instagram.jpg" alt="Instagram" loading="lazy" draggable="false"></span>
+          <span class="c-title">Instagram</span>
+          <span class="chips"><span class="chip-tag">17k+ followers</span></span>
+        </a>
+        <a class="c-tile reveal" href="https://socialmind.cz" target="_blank" rel="noopener" style="--i:3">
+          <span class="c-media"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/6adf235b8732afcaa59f31c6_home-community-webinars.jpg" alt="Webinars" loading="lazy" draggable="false"></span>
+          <span class="c-title">Webinars</span>
+          <span class="chips"><span class="chip-tag">7,2k+ registrations</span></span>
+        </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── CTA -->
+    <section id="cta" class="sec">
+      <button class="cta-band reveal" type="button" data-drawer="contact">
+        <span class="cta-bg" aria-hidden="true"></span>
+        <span class="cta-row">
+          <img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/695916f0d73ce68e7324b6ac_Profile%20pic.avif" alt="" draggable="false">
+          <span class="cta-q">Ready for visuals that work?</span>
+          <span class="cta-a">You’re one step away</span>
+          <span class="cta-arrow">→</span>
+          <span class="cta-chat"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V15h0a2 2 0 0 1-2-2z" fill="none" stroke="#1d1d1d" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+        </span>
+      </button>
+    </section>
+
+    <footer id="footer">
+      <div class="wrap center">
+        <div class="f-card reveal">
+          <h3>Join 150+<br>customers</h3>
+          <button type="button" class="f-link" data-copy="blazek@socialmind.cz"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 4.5A1.5 1.5 0 0 1 4.5 3h7A1.5 1.5 0 0 1 13 4.5v4A1.5 1.5 0 0 1 11.5 10H8l-3 2.5V10a1.5 1.5 0 0 1-2-1.5z" fill="none" stroke="currentColor" stroke-linejoin="round"/></svg>blazek@socialmind.cz</button>
+          <a class="f-link" href="https://www.instagram.com/blazek.design/" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14"><rect x="2.5" y="2.5" width="11" height="11" rx="3.2" fill="none" stroke="currentColor"/><circle cx="8" cy="8" r="2.6" fill="none" stroke="currentColor"/></svg>@blazek.design</a>
+        </div>
+        <p class="f-word" aria-hidden="true">blazek.design</p>
+        <div class="f-bottom"><span>© 2026 Jakub Blažek</span><button type="button" class="to-top" data-top>Back to top ↑</button></div>
+      </div>
+    </footer>
   </main>
+
+  <!-- ───────── drawers -->
+  <div id="drawerScrim" hidden></div>
+  <aside class="drawer" id="drawer-contact" role="dialog" aria-modal="true" aria-labelledby="contactTitle" aria-hidden="true">
+    <div class="dr-head">
+      <p class="label">Contact Jakub</p>
+      <button class="dr-close" type="button" data-close aria-label="Close">Close</button>
+    </div>
+    <div class="dr-body">
+      <div class="dr-me">
+        <img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/695916f0d73ce68e7324b6ac_Profile%20pic.avif" alt="" draggable="false">
+        <div><b>Jakub Blažek</b><span>Designer &amp; Art Director</span></div>
+      </div>
+      <h2 id="contactTitle">Let’s talk design</h2>
+      <form id="contactForm" novalidate>
+        <fieldset class="dr-topics">
+          <legend class="label">What are we making?</legend>
+          <button type="button" class="topic" data-topic="Brand & Visual Identity">Brand identity</button>
+          <button type="button" class="topic" data-topic="Websites">Website</button>
+          <button type="button" class="topic" data-topic="Apps & UI/UX">App / UI/UX</button>
+          <button type="button" class="topic" data-topic="Art Direction">Art direction</button>
+          <button type="button" class="topic" data-topic="Something else">Something else</button>
+        </fieldset>
+        <label class="field"><span class="label">Your name</span><input name="name" autocomplete="name" placeholder="Jana Nováková"></label>
+        <label class="field"><span class="label">Email</span><input name="email" type="email" autocomplete="email" placeholder="jana@company.com"></label>
+        <label class="field"><span class="label">About the project</span><textarea name="message" rows="4" placeholder="A few lines about what you need, timeline, budget…"></textarea></label>
+        <button class="b-lime wide" type="submit">Send message</button>
+        <p class="dr-note" id="formNote">Opens your mail app with everything filled in.</p>
+      </form>
+      <div class="dr-alt">
+        <button type="button" class="dr-link" data-copy="blazek@socialmind.cz"><span class="label">Email</span><b>blazek@socialmind.cz</b><i>Copy</i></button>
+        <a class="dr-link" href="https://www.instagram.com/blazek.design/" target="_blank" rel="noopener"><span class="label">Instagram</span><b>@blazek.design</b><i>↗</i></a>
+      </div>
+    </div>
+  </aside>
+
+  <aside class="drawer wide" id="drawer-waitlist" role="dialog" aria-modal="true" aria-labelledby="wlTitle" aria-hidden="true">
+    <div class="dr-head">
+      <p class="label" id="wlTitle">Webdesigner · předregistrace</p>
+      <button class="dr-close" type="button" data-close aria-label="Zavřít">Close</button>
+    </div>
+    <div class="dr-frame" data-src="https://aokmy84iync.typeform.com/to/K9GfbDKa?typeform-embed=embed-widget&amp;typeform-medium=embed-snippet&amp;source=squeeze-hero">
+      <div class="dr-loading"><i></i>Načítám formulář…</div>
+    </div>
+    <a class="dr-fallback" href="https://aokmy84iync.typeform.com/to/K9GfbDKa" target="_blank" rel="noopener">Formulář se nenačetl? Otevři ho v novém okně ↗</a>
+  </aside>
+
+  <!-- ───────── hand pointer + HUD (gesture control outside the hero) -->
+  <div id="handCursor" aria-hidden="true"><svg viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring" cx="22" cy="22" r="18"/></svg><i></i></div>
+  <div id="hud" aria-hidden="true">
+    <canvas id="hudSkel" width="96" height="96"></canvas>
+    <div><b id="hudMode">Hand</b><span>☝ click · ✌ scroll</span></div>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
 
   <canvas id="fx" aria-hidden="true"></canvas>
   <pre id="debug" hidden></pre>
 
+  <script src="site.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

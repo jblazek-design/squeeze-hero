@@ -32,6 +32,11 @@ const CFG = {
   waveSwings: 3,         // direction changes needed…
   waveWindow: 1500,      // …within this many ms
   confettiCooldown: 2200,
+  // gesture control (whole page): ☝ index only = pointer, ✌ index+middle = scroll
+  poseFrames: 4,         // a pose must hold this many camera frames before it switches
+  dwell: 700,            // ms of hovering a button with the pointer = click
+  pointerBox: [0.18, 0.14, 0.82, 0.78], // camera area (x0,y0,x1,y1) mapped to the whole screen
+  scrollGain: 2.6,       // how much the page moves per hand movement (in screen heights)
   popOn: 0.86,           // stickers pop when squeeze passes this…
   popOff: 0.55,          // …and hide when it drops below this
   parallax: 1,           // overall parallax strength
@@ -51,6 +56,12 @@ const hiChip = $('#hiChip'), soundBtn = $('#soundBtn');
 const stickers = [$('#stOuch'), $('#stBolt1'), $('#stBolt2')];
 const hiBubble = $('#stHi');
 const fx = $('#fx'), fctx = fx.getContext('2d');
+const heroEl = $('#hero'), stageEl = $('#stage');
+const handCursor = $('#handCursor'), hudEl = $('#hud'), hudMode = $('#hudMode');
+const hudSkel = $('#hudSkel'), hctx2 = hudSkel.getContext('2d');
+new IntersectionObserver(([en]) => { S.heroVisible = en.isIntersecting; }, { threshold: 0.02 }).observe(heroEl);
+const drawerOpen = () => !!(window.siteUI && window.siteUI.drawerOpen);
+const typing = () => { const a = document.activeElement; return a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName); };
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const clamp01 = v => clamp(v, 0, 1);
@@ -67,6 +78,10 @@ const S = {
   vx: 0, mvx: 0, lastX: null, lastHandT: 0,
   flips: [], lastSign: 0, waveUntil: 0, wave: 0, wasWaving: false,
   tipX: null, tipV: 0, greet: 0, lastConfetti: -1e9, mflips: [], mSign: 0,
+  pose: 'none', poseCand: 'none', poseN: 0,
+  ptr: { x: 0, y: 0, tx: 0, ty: 0, on: false }, hoverEl: null, hoverT: 0, clickedEl: null,
+  scrollY0: null, scrollAcc: 0, scrollV: 0,
+  heroVisible: true,
   wob: { x: 0, v: 0 }, bounce: { x: 0, v: 0 },
   popped: false, crumpledOnce: false,
   hand: null, handAt: -1e9, ratio: null, lo: CFG.openLo, hi: CFG.openHi,
@@ -254,9 +269,9 @@ void main(){
 }
 function drawBG() {
   if (!gl) return;
-  const r = headWrap.getBoundingClientRect();
+  const r = headWrap.getBoundingClientRect(), h = heroEl.getBoundingClientRect();
   const hx = (r.left + r.width * 0.5) / innerWidth * 1440;
-  const hy = (r.top + r.height * 0.52) / innerHeight * 896;
+  const hy = (r.top - h.top + r.height * 0.52) / h.height * 896;
   gl.uniform2f(glU.uRes, bgCanvas.width, bgCanvas.height);
   gl.uniform2f(glU.uPar, S.par.x, S.par.y);
   gl.uniform2f(glU.uHead, hx, hy);
@@ -445,7 +460,7 @@ function greet() {
 const isUI = el => el && el.closest && el.closest('a, button');
 addEventListener('pointerdown', e => {
   unlockAudio();
-  if (isUI(e.target)) return;
+  if (isUI(e.target) || drawerOpen() || !e.target.closest('#hero')) return;
   S.pressed = true;
 });
 addEventListener('pointerup', () => { S.pressed = false; });
@@ -468,8 +483,12 @@ addEventListener('pointermove', e => {
 });
 document.addEventListener('mouseleave', () => { S.mouseActive = false; });
 addEventListener('keydown', e => {
+  if (typing()) return;
   unlockAudio();
-  if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) S.pressed = true; }
+  if (e.code === 'Space') {
+    if (drawerOpen() || scrollY > innerHeight * 0.4) return;   // normal page scroll below the hero
+    e.preventDefault(); if (!e.repeat) S.pressed = true;
+  }
   else if (e.key === 'd' || e.key === 'D') { S.debug = !S.debug; debugEl.hidden = !S.debug; }
   else if (e.key === 'c' || e.key === 'C') { S.showCam = !S.showCam; root.classList.toggle('show-cam', S.showCam); }
   else if (e.key === 'm' || e.key === 'M') { S.input = S.input === 'camera' ? 'mouse' : 'camera'; }
@@ -536,6 +555,7 @@ function onHand(lm, now) {
   if (S.hi - S.lo < 0.45) S.hi = S.lo + 0.45;
   const open = clamp01((ratio - S.lo) / (S.hi - S.lo));
   S.open = open;
+  classifyPose(lm, now);
   // dead zone: a relaxed / half-open hand does nothing, only a real fist crumples
   const sq = smooth(CFG.squeezeStart, CFG.squeezeFull, 1 - open);
 
@@ -559,14 +579,142 @@ function onHand(lm, now) {
     }
   }
   S.flips = S.flips.filter(t => now - t < CFG.waveWindow);
-  if (S.flips.length >= CFG.waveSwings && open > 0.45) S.waveUntil = now + 800;
+  if (S.flips.length >= CFG.waveSwings && open > 0.45 && S.pose === 'open') S.waveUntil = now + 800;
   S.lastX = cx; S.tipX = tx; S.lastHandT = now;
 
   // while the hand is swinging, never crumple (motion blur makes fingers look shorter)
   const moving = now < S.waveUntil + 400 || Math.abs(S.tipV) > 1.2;
-  S.handSq = moving ? Math.min(sq, S.handSq) : sq;
+  // pointing / scrolling poses never crumple the head
+  const gesture = S.pose === 'point' || S.pose === 'two' || S.poseCand === 'point' || S.poseCand === 'two';
+  S.handSq = gesture || drawerOpen() ? 0 : moving ? Math.min(sq, S.handSq) : sq;
+
+  // pointer target (index fingertip, mirrored, mapped from the comfortable middle of the camera)
+  const [bx0, by0, bx1, by1] = CFG.pointerBox;
+  S.ptr.tx = clamp01(((1 - lm[8].x) - bx0) / (bx1 - bx0)) * innerWidth;
+  S.ptr.ty = clamp01((lm[8].y - by0) / (by1 - by0)) * innerHeight;
+  // two-finger scroll: drag the page with the hand
+  if (S.pose === 'two') {
+    const y = (lm[8].y + lm[12].y) / 2;
+    if (S.scrollY0 != null) {
+      const dy = y - S.scrollY0;
+      if (Math.abs(dy) > 0.002) S.scrollAcc += -dy * innerHeight * CFG.scrollGain;
+    }
+    S.scrollY0 = y;
+  } else S.scrollY0 = null;
 
   S.hand = lm; S.handAt = now;
+}
+
+// ─────────────────────────────── gesture poses
+// a finger counts as extended when its tip is clearly further from the wrist than its middle joint
+const FINGERS = [[8, 6], [12, 10], [16, 14], [20, 18]];
+function classifyPose(lm, now) {
+  const w = lm[0];
+  const ext = FINGERS.map(([tip, pip]) => dist(lm[tip], w) > dist(lm[pip], w) * 1.12);
+  const n = ext.filter(Boolean).length;
+  let p = 'other';
+  if (ext[0] && !ext[1] && !ext[2] && !ext[3]) p = 'point';
+  else if (ext[0] && ext[1] && !ext[2] && !ext[3]) p = 'two';
+  else if (n >= 3) p = 'open';
+  else if (n === 0) p = 'fist';
+  if (p === S.poseCand) S.poseN++; else { S.poseCand = p; S.poseN = 1; }
+  // entering pointer/scroll needs a steady pose; leaving them needs a bit longer (no flicker)
+  const need = (S.pose === 'point' || S.pose === 'two') ? CFG.poseFrames + 2 : CFG.poseFrames;
+  if (S.poseN >= need && S.pose !== p) setPose(p);
+}
+function setPose(p) {
+  const was = S.pose;
+  S.pose = p;
+  if (p === 'point' && was !== 'point') { S.ptr.x = S.ptr.tx; S.ptr.y = S.ptr.ty; }
+  if (was === 'two' && p !== 'two') S.scrollV = S.scrollV; // keep momentum
+}
+const CLICKABLE = 'a, button, [data-drawer], [data-copy], .topic, label.field';
+function setHover(el, now) {
+  if (el === S.hoverEl) return;
+  if (S.hoverEl) S.hoverEl.classList.remove('hand-hover');
+  S.hoverEl = el; S.hoverT = now;
+  if (el) el.classList.add('hand-hover');
+  if (el !== S.clickedEl) S.clickedEl = null;
+}
+function handClick(el) {
+  S.clickedEl = el;
+  handCursor.classList.remove('click'); void handCursor.offsetWidth; handCursor.classList.add('click');
+  popSound(1.6, 0);
+  if (el.matches('label.field')) { const f = el.querySelector('input,textarea'); f && f.focus(); return; }
+  // links that would open a new tab are opened in this tab (pop-up blockers stop scripted new tabs)
+  if (el.tagName === 'A' && el.target === '_blank' && el.href) { location.href = el.href; return; }
+  el.click();
+}
+function gestureTick(now, dt, live) {
+  const pointing = live && S.pose === 'point';
+  const scrolling = live && S.pose === 'two';
+  // cursor
+  if (pointing) {
+    const d = Math.hypot(S.ptr.tx - S.ptr.x, S.ptr.ty - S.ptr.y);
+    const k = 9 + Math.min(d, 300) * 0.12;            // adaptive smoothing: steady when still, quick when moving
+    S.ptr.x = damp(S.ptr.x, S.ptr.tx, k, dt);
+    S.ptr.y = damp(S.ptr.y, S.ptr.ty, k, dt);
+  } else if (scrolling) {
+    S.ptr.x = damp(S.ptr.x, S.ptr.tx, 10, dt);
+    S.ptr.y = damp(S.ptr.y, S.ptr.ty, 10, dt);
+  }
+  handCursor.classList.toggle('on', pointing || scrolling);
+  handCursor.classList.toggle('scroll', scrolling);
+  handCursor.style.transform = `translate3d(${S.ptr.x.toFixed(1)}px, ${S.ptr.y.toFixed(1)}px, 0)`;
+
+  // hover + dwell click
+  let progress = 0;
+  if (pointing) {
+    const hit = document.elementFromPoint(S.ptr.x, S.ptr.y);
+    let el = hit && hit.closest(CLICKABLE);
+    // inside an open drawer only its own controls count
+    if (el && drawerOpen() && !el.closest('.drawer')) el = null;
+    setHover(el, now);
+    if (el && el !== S.clickedEl) {
+      progress = clamp01((now - S.hoverT) / CFG.dwell);
+      if (progress >= 1) { handClick(el); S.hoverT = now; }
+    }
+  } else setHover(null, now);
+  handCursor.classList.toggle('hover', !!S.hoverEl && pointing);
+  handCursor.style.setProperty('--p', progress.toFixed(3));
+
+  // scroll with momentum
+  if (scrolling) {
+    const dy = S.scrollAcc; S.scrollAcc = 0;
+    const target = dy / Math.max(dt, 1e-3);
+    S.scrollV = lerp(S.scrollV, target, 0.35);
+    if (dy && !drawerOpen()) scrollBy(0, dy);
+    else if (dy && drawerOpen()) { const b = document.querySelector('.drawer.open .dr-body'); b && (b.scrollTop += dy); }
+  } else {
+    S.scrollAcc = 0;
+    if (Math.abs(S.scrollV) > 30 && !drawerOpen()) { scrollBy(0, S.scrollV * dt); S.scrollV *= Math.exp(-3.2 * dt); }
+    else S.scrollV = 0;
+  }
+
+  // HUD outside the hero
+  const showHud = live && !S.heroVisible;
+  hudEl.classList.toggle('show', showHud || (S.camStatus === 'live' && !S.heroVisible));
+  hudEl.classList.toggle('pointer', pointing);
+  hudEl.classList.toggle('scroll', scrolling);
+  const label = !live ? 'Show your hand' : pointing ? 'Pointer' : scrolling ? 'Scrolling' : S.pose === 'fist' ? 'Fist' : 'Hand';
+  if (hudMode.textContent !== label) hudMode.textContent = label;
+  if (!S.heroVisible) drawMiniSkeleton(live);
+}
+function drawMiniSkeleton(live) {
+  const w = hudSkel.width, h = hudSkel.height;
+  hctx2.clearRect(0, 0, w, h);
+  if (!live || !S.hand) return;
+  const pts = S.hand.map(p => ({ x: 1 - p.x, y: p.y }));
+  let x0 = 1, y0 = 1, x1 = 0, y1 = 0;
+  for (const p of pts) { x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y); }
+  const sc = (w * 0.72) / Math.max(x1 - x0, y1 - y0, 0.05);
+  const ox = w / 2 - (x0 + x1) / 2 * sc, oy = h / 2 - (y0 + y1) / 2 * sc;
+  hctx2.strokeStyle = '#fff'; hctx2.lineWidth = 1.4; hctx2.lineCap = 'round';
+  hctx2.beginPath();
+  for (const [a, b] of BONES) { hctx2.moveTo(pts[a].x * sc + ox, pts[a].y * sc + oy); hctx2.lineTo(pts[b].x * sc + ox, pts[b].y * sc + oy); }
+  hctx2.stroke();
+  hctx2.fillStyle = '#D5FF2C';
+  for (const i of S.pose === 'point' ? [8] : S.pose === 'two' ? [8, 12] : []) { hctx2.beginPath(); hctx2.arc(pts[i].x * sc + ox, pts[i].y * sc + oy, 4, 0, 7); hctx2.fill(); }
 }
 
 // ─────────────────────────────── skeleton (media box)
@@ -608,7 +756,7 @@ function tick(now) {
 
   // squeeze
   S.mouseSq = clamp01(S.mouseSq + (S.pressed ? 1.3 : -1.7) * dt);
-  const target = live ? S.handSq : S.mouseSq;
+  const target = (live ? S.handSq : S.mouseSq) * (S.heroVisible ? 1 : 0);
   const prev = S.t;
   S.t = damp(S.t, target, CFG.follow, dt);
   S.speed = (S.t - prev) / Math.max(dt, 1e-3);
@@ -665,15 +813,23 @@ function tick(now) {
   copyEl.style.translate = `${(-p.x * 12 * u).toFixed(2)}px ${(-p.y * 7).toFixed(2)}px`;
   mediaLayer.style.translate = `${(-p.x * 7).toFixed(2)}px ${(-p.y * 5).toFixed(2)}px`;
 
-  drawHead();
-  drawBG();
-  drawSkeleton(live);
+  if (S.heroVisible) {
+    drawHead();
+    drawBG();
+    drawSkeleton(live);
+    const sp = Math.min(scrollY, innerHeight);
+    stageEl.style.translate = `0 ${(sp * 0.35 / S.u).toFixed(1)}px`;
+    stageEl.style.opacity = (1 - sp / innerHeight * 0.9).toFixed(3);
+  }
+  gestureTick(now, dt, live);
   drawConfetti(dt);
 
   // ui
   meterBar.style.transform = `scaleX(${S.t.toFixed(3)})`;
   let hint;
   if (S.loaded < CFG.frames) hint = `Loading ${Math.round(S.loaded / CFG.frames * 100)}%`;
+  else if (live && S.pose === 'point') hint = 'Pointer · hold over a button';
+  else if (live && S.pose === 'two') hint = 'Scroll · move hand up / down';
   else if (live && S.popped) hint = 'Ouch! Open to fix it';
   else if (live && waving) hint = 'Ahoj!';
   else if (live) hint = 'Squeeze your hand';
@@ -707,7 +863,7 @@ function firstFrameReady() {
 }
 
 // test hook (used for automated checks; harmless in production)
-window.__sq = { S, CFG, onHand, A, confetti };
+window.__sq = { S, CFG, onHand, A, confetti, setPose };
 
 // ─────────────────────────────── boot
 initGL();
