@@ -1,6 +1,10 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/navod", "destination": "/#navod", "permanent": false },
+    { "source": "/navod.html", "destination": "/#navod", "permanent": false }
+  ],
   "headers": [
     { "source": "/frames/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
     { "source": "/vendor/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }

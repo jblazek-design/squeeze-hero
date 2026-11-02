@@ -588,3 +588,30 @@ body.drawer-open { overflow: hidden; }
   .row2 { grid-template-columns: 1fr; }
   .wd2-stats span { font-size: 11px; }
 }
+
+/* ═════════ one-page návod ═════════ */
+.s-sub { max-width: 46ch; margin: 16px auto 0; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.35; letter-spacing: -.5px; color: var(--mute); }
+#navod .demo { margin-bottom: 8px; }
+#navod .demo-stage { min-height: 380px; }
+.demo-vals dt { text-transform: none !important; font-family: var(--pg) !important; font-weight: 600; font-size: 12px !important; }
+.sts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.st { display: grid; grid-template-columns: 40px minmax(0, .85fr) minmax(0, 1.15fr); gap: 18px; align-items: start; padding: 20px; border-radius: 8px; background: var(--tile); }
+.st-n { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; background: var(--lime); font-size: 16px; }
+.st h3 { margin: 4px 0 8px; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.05; letter-spacing: -1px; font-weight: 600; }
+.st p { margin: 0; font-size: 16px; line-height: 1.4; letter-spacing: -.45px; color: var(--mute); }
+.st-prompt .prompt { margin: 0; }
+.st-prompt pre { font-size: 12.5px !important; line-height: 1.55 !important; }
+.st-prompt.empty { display: none; }
+.st:has(.st-prompt.empty) { grid-template-columns: 40px minmax(0, 1fr); }
+.nv2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.nv2-box { padding: 20px; border-radius: 8px; background: var(--tile); }
+.nv2-box .label { margin-bottom: 14px; }
+.checks.one { grid-template-columns: 1fr; gap: 10px; }
+.nv2-box .faq details { background: #fff; }
+.nv2-box .faq summary { font-size: 15px; }
+.nv2-box .faq summary:hover, .nv2-box .faq summary.hand-hover { color: #5d7800; }
+.nv2-box .faq p { font-size: 14px; line-height: 1.45; color: var(--mute); }
+.nv2-next { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 8px; padding: 18px 20px; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font-size: 16px; letter-spacing: -.5px; transition: transform .35s var(--ease); }
+.nv2-next b { flex: none; color: var(--lime); font-weight: 600; }
+.nv2-next:hover, .nv2-next.hand-hover { transform: translateY(-2px); }
+@media (max-width: 860px) { .st { grid-template-columns: 36px minmax(0, 1fr); } .st-prompt { grid-column: 1 / -1; } .nv2 { grid-template-columns: 1fr; } .nv2-next { flex-direction: column; align-items: flex-start; } }

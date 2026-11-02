@@ -71,7 +71,7 @@
     const ratio = [8, 12, 16, 20].reduce((s, i) => s + dist(pts[i], pts[0]), 0) / 4 / palm;
     const open = clamp01((ratio - 1.05) / (1.80 - 1.05));
     const sq = smooth(0.40, 0.93, 1 - open);
-    return { pts, ratio, sq };
+    return { pts, ratio, sq, open };
   }
 
   function draw(force) {
@@ -88,11 +88,11 @@
   }
 
   function update() {
-    const { pts, ratio, sq } = compute(range.value / 1000);
+    const { pts, sq, open } = compute(range.value / 1000);
     drawHand(pts);
     target = sq;
-    $('#vRatio').textContent = ratio.toFixed(2);
-    $('#vSq').textContent = sq.toFixed(2);
+    $('#vRatio').textContent = Math.round(open * 100) + ' %';
+    $('#vSq').textContent = Math.round(sq * 100) + ' %';
   }
   range.addEventListener('input', update);
   update();

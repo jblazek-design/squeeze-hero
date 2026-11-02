@@ -62,4 +62,4 @@ Pořadí: hero → portfolio (Featured work) → Teaching thousands (komunita) �
 Design je podle portfolia blazek-design.webflow.io (PP Pangram Sans, limetková #D5FF2C, šedé dlaždice #f4f4f4). Obrázky, video kurzu a font se načítají z Webflow CDN — když je tam smažeš nebo přejmenuješ, zmizí i tady.
 
 ## Návod
-`navod.html` (na Vercelu jako **/navod**) je podrobný návod, jak animace vznikla: princip, Figma, video, zadání, klíčování snímků, sledování ruky, efekty, mávání, gesta, nasazení, chyby a prompty ke zkopírování. Nahoře je interaktivní demo bez kamery (posuvník = ruka).
+Jednoduchý návod je přímo na stránce v sekci **#navod** (mezi komunitou a kurzem): demo s posuvníkem, 5 kroků normální řečí s prompty ke zkopírování, „co za tebe udělal Claude“ a časté otázky. Adresa **/navod** přesměruje rovnou na tuhle sekci (vercel.json).

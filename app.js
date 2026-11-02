@@ -628,7 +628,7 @@ function setPose(p) {
   if (p === 'point' && was !== 'point') { S.ptr.x = S.ptr.tx; S.ptr.y = S.ptr.ty; }
   if (was === 'two' && p !== 'two') S.scrollV = S.scrollV; // keep momentum
 }
-const CLICKABLE = 'a, button, [data-drawer], [data-copy], .topic, label.field';
+const CLICKABLE = 'a, button, summary, [data-drawer], [data-copy], .topic, label.field';
 function setHover(el, now) {
   if (el === S.hoverEl) return;
   if (S.hoverEl) S.hoverEl.classList.remove('hand-hover');

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="navod.css">
 </head>
 <body id="top">
   <!-- ───────── nav (appears after the hero) -->
@@ -17,7 +18,7 @@
     <nav class="nav-links">
       <a href="#work">Work</a>
       <a href="#webdesigner">Kurz</a>
-      <a href="navod.html">Návod</a>
+      <a href="#navod">Návod</a>
       <a class="nav-cta" href="#contact" data-drawer="contact">Contact</a>
     </nav>
   </header>
@@ -160,6 +161,82 @@
       </div>
     </section>
 
+    <!-- ───────── návod (simple, one page) -->
+    <section id="navod" class="sec">
+      <div class="wrap">
+        <header class="s-head"><p class="label reveal">Návod</p><h2 class="reveal">Jak tahle stránka vznikla<br>— bez programování</h2><p class="s-sub reveal">Žádný kód, žádný vývojář. Figma, jedno AI video a Claude. Zvládneš to taky.</p></header>
+        <div class="demo reveal">
+          <div class="demo-stage">
+            <canvas id="demoHead" width="660" height="660" aria-label="Hlava, která se mačká podle posuvníku"></canvas>
+            <img id="demoOuch" src="assets/ouch.svg" alt="" draggable="false">
+          </div>
+          <div class="demo-side">
+            <p class="label">Zkus si to bez kamery</p>
+            <h3>Posuvník = tvoje ruka</h3>
+            <svg id="demoHand" viewBox="30 36 160 172" aria-hidden="true"></svg>
+            <input id="demoRange" type="range" min="0" max="1000" value="0" aria-label="Jak moc je ruka zavřená">
+            <div class="demo-row"><span>Otevřená dlaň</span><span>Pěst</span></div>
+            <dl class="demo-vals">
+              <div><dt>otevřená ruka</dt><dd id="vRatio">100 %</dd></div>
+              <div><dt>zmačknutí</dt><dd id="vSq">0 %</dd></div>
+              <div><dt>obrázek</dt><dd id="vFrame">0 / 120</dd></div>
+            </dl>
+            <p class="demo-note">Web s kamerou dělá přesně tohle: podívá se, jak moc máš zavřenou ruku, a podle toho ukáže jeden ze 121 obrázků z videa.</p>
+          </div>
+        </div>
+        <ol class="sts">
+          <li class="st reveal" style="--i:0">
+            <span class="st-n">1</span>
+            <div class="st-txt"><h3>Nakresli začátek a konec</h3><p>Ve Figmě si připrav dva obrázky stránky: jak vypadá na začátku a jak na konci. U mě normální hlava a zmačkaná papírová koule se samolepkou OUCH.</p></div>
+            <div class="st-prompt empty"></div>
+          </li>
+          <li class="st reveal" style="--i:1">
+            <span class="st-n">2</span>
+            <div class="st-txt"><h3>Vygeneruj krátké video</h3><p>V AI video nástroji nech vzniknout 5vteřinové video, kde se hlava zmačká. Dvě pravidla: zelené pozadí a kamera se nehýbe. Nejlíp funguje dát nástroji první a poslední obrázek a nechat ho dopočítat, co je mezi.</p></div>
+            <div class="st-prompt"><div class="prompt"><div class="prompt-head"><span class="label">Prompt · zkopíruj a uprav</span><button class="copy" type="button">Kopírovat</button></div><pre>Static camera, solid chroma-key green background. A low-poly paper-craft head slowly crumples into a tight ball of crinkled paper, as if squeezed by an invisible hand. One continuous shot, no cuts, no camera movement, nothing else in frame. 5 seconds.</pre></div></div>
+          </li>
+          <li class="st reveal" style="--i:2">
+            <span class="st-n">3</span>
+            <div class="st-txt"><h3>Popiš Claudovi, co chceš</h3><p>Pošli mu video a odkazy na Figmu a normálně napiš, co se má dít. Jako bys to vysvětloval kamarádovi. Žádné technické výrazy nepotřebuješ.</p></div>
+            <div class="st-prompt"><div class="prompt"><div class="prompt-head"><span class="label">Prompt · zkopíruj a uprav</span><button class="copy" type="button">Kopírovat</button></div><pre>Postav mi úvodní sekci webu, kterou ovládám rukou přes kameru.
+
+Posílám video, kde se moje hlava zmačká do papírové koule, a dva obrázky z Figmy: začátek [odkaz] a konec [odkaz].
+
+Chci tohle:
+- Otevřená ruka = normální hlava. Když ruku zavírám do pěsti, hlava se postupně mačká. Když ji otevřu, zase se rozbalí.
+- Když ruku úplně zmáčknu, ať vyskočí samolepky z obrázku a zazní zvuk. Ať je to vtipné.
+- Když hýbu rukou, ať se celý web jemně hýbe.
+- Rozpohybuj gradient na pozadí.
+
+Zelené pozadí videa odstraň a hlavu umísti přesně jako ve Figmě.</pre></div></div>
+          </li>
+          <li class="st reveal" style="--i:3">
+            <span class="st-n">4</span>
+            <div class="st-txt"><h3>Zkoušej a přidávej</h3><p>Vyzkoušej, co funguje, a další přání napiš do další zprávy. Takhle postupně přibylo mávání s konfetami, klikání prstem i celý zbytek stránky.</p></div>
+            <div class="st-prompt"><div class="prompt"><div class="prompt-head"><span class="label">Prompt · zkopíruj a uprav</span><button class="copy" type="button">Kopírovat</button></div><pre>Když rukou zamávám, ať se hlava natočí ke mně, vystřelí konfety a vyskočí bublina „AHOJ!“. A ať se hlava mačká, jen když ruku opravdu zmáčknu do pěsti.
+
+Pak dodělej zbytek stránky podle mého portfolia [odkaz]. Přidej ovládání prsty: jeden prst nahoru = klikám na tlačítka, dva prsty = posouvám stránku.</pre></div></div>
+          </li>
+          <li class="st reveal" style="--i:4">
+            <span class="st-n">5</span>
+            <div class="st-txt"><h3>Pusť to na internet</h3><p>Napiš Claudovi, ať to dá na GitHub a Vercel. Zařídí to v tvém prohlížeči, ty jen potvrdíš přihlášení. Pro osobní web je to zdarma.</p></div>
+            <div class="st-prompt"><div class="prompt"><div class="prompt-head"><span class="label">Prompt · zkopíruj a uprav</span><button class="copy" type="button">Kopírovat</button></div><pre>Hoď to na GitHub a napoj na Vercel. Jsem přihlášený v Chromu. Kdyby bylo potřeba něco potvrdit, napiš mi.</pre></div></div>
+          </li>
+        </ol>
+        <div class="nv2">
+          <div class="nv2-box reveal">
+            <p class="label">Co za tebe udělal Claude</p>
+            <ul class="checks one"><li>Rozstříhal video na 121 obrázků a odstranil zelené pozadí.</li><li>Naučil web vidět tvoji ruku přes kameru. Na dlani pozná 21 bodů (umí to nástroj MediaPipe od Googlu).</li><li>Podle toho, jak moc máš ruku zavřenou, ukáže správný obrázek. Proto se hlava mačká spolu s tebou.</li><li>Rozpohyboval pozadí a přidal zvuky, samolepky a konfety.</li><li>Přidal ovládání prsty: jeden prst kliká, dva prsty posouvají stránku.</li><li>Celé to nahrál na internet.</li></ul>
+          </div>
+          <div class="nv2-box reveal" style="--i:1">
+            <p class="label">Časté otázky</p>
+            <div class="faq"><details><summary>Musím umět programovat?</summary><p>Ne. Všechno jsem zadával normální češtinou a kód jsem nemusel otevřít.</p></details><details><summary>Kolik to stojí?</summary><p>Potřebuješ předplatné Clauda a nástroj na AI video. Hosting na GitHubu a Vercelu je pro osobní web zdarma.</p></details><details><summary>Je kamera bezpečná?</summary><p>Obraz z kamery se nikam neposílá. Všechno se počítá přímo ve tvém prohlížeči.</p></details><details><summary>Co když to napoprvé nevyjde?</summary><p>To je normální. Napiš Claudovi, co ti vadí — třeba „hlava se mačká, i když mávám“ — a on to opraví. Takhle vznikla většina vylepšení.</p></details></div>
+          </div>
+        </div>
+        <a class="nv2-next reveal" href="#webdesigner"><span>Chceš to umět krok za krokem? Přesně tohle učím v kurzu Webdesigner.</span><b>Mrkni níž ↓</b></a>
+      </div>
+    </section>
+
     <!-- ───────── Webdesigner: video | program -->
     <section id="webdesigner" class="sec">
       <div class="wd2 reveal">
@@ -190,7 +267,7 @@
                 <div><b>173</b><span>lekcí v 7 částech</span></div>
                 <div><b>200+</b><span>v komunitě webdesignerů a grafiků</span></div>
               </div>
-              <div class="note"><span class="label">Uvnitř</span>Modul AI &amp; vibe coding — přesně tímhle postupem vznikl i tenhle web. <a href="navod.html">Podívej se jak ↗</a></div>
+              <div class="note"><span class="label">Uvnitř</span>Modul AI &amp; vibe coding — přesně tímhle postupem vznikl i tenhle web. <a href="#navod">Podívej se jak ↑</a></div>
             </div>
             <div class="tab-panel" data-panel="lessons">
               <div class="mods">
@@ -249,7 +326,7 @@
             <div class="ct-links">
               <button type="button" class="ct-link" data-copy="blazek@socialmind.cz"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 4.5A1.5 1.5 0 0 1 4.5 3h7A1.5 1.5 0 0 1 13 4.5v4A1.5 1.5 0 0 1 11.5 10H8l-3 2.5V10a1.5 1.5 0 0 1-2-1.5z" fill="none" stroke="currentColor" stroke-linejoin="round"/></svg>blazek@socialmind.cz<i>Copy</i></button>
               <a class="ct-link" href="https://www.instagram.com/blazek.design/" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14"><rect x="2.5" y="2.5" width="11" height="11" rx="3.2" fill="none" stroke="currentColor"/><circle cx="8" cy="8" r="2.6" fill="none" stroke="currentColor"/></svg>@blazek.design<i>↗</i></a>
-              <a class="ct-link" href="navod.html"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13.5c-1.6-1.5-3.4-2-5.5-2v-8c2.1 0 3.9.5 5.5 2m0 8c1.6-1.5 3.4-2 5.5-2v-8c-2.1 0-3.9.5-5.5 2m0 8v-8" fill="none" stroke="currentColor" stroke-linejoin="round"/></svg>Jak vznikla tahle stránka<i>Návod</i></a>
+              <a class="ct-link" href="#navod"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13.5c-1.6-1.5-3.4-2-5.5-2v-8c2.1 0 3.9.5 5.5 2m0 8c1.6-1.5 3.4-2 5.5-2v-8c-2.1 0-3.9.5-5.5 2m0 8v-8" fill="none" stroke="currentColor" stroke-linejoin="round"/></svg>Jak vznikla tahle stránka<i>Návod</i></a>
             </div>
           </div>
           <form id="contactForm" class="ct-form" novalidate>
@@ -272,7 +349,7 @@
           </form>
         </div>
         <p class="f-word" aria-hidden="true">blazek.design</p>
-        <div class="f-bottom"><span>© 2026 Jakub Blažek</span><a href="navod.html">Návod: jak vznikla tahle stránka</a><button type="button" class="to-top" data-top>Back to top ↑</button></div>
+        <div class="f-bottom"><span>© 2026 Jakub Blažek</span><a href="#navod">Návod: jak vznikla tahle stránka</a><button type="button" class="to-top" data-top>Back to top ↑</button></div>
       </div>
     </footer>
   </main>
@@ -302,6 +379,7 @@
   <pre id="debug" hidden></pre>
 
   <script src="site.js"></script>
+  <script src="navod.js" defer></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
