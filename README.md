@@ -58,6 +58,8 @@ Jednodušší je poslat mi ji a já ji vyklíčuju a zarovnám.
 - `vendor/mediapipe/`: model a runtime pro sledování ruky, přibalené lokálně
 
 ## Zbytek stránky
-Sekce pod hero (Featured work, Services, Webdesigner předregistrace, Community, kontakt) jsou v designu portfolia blazek-design.webflow.io: PP Pangram Sans, limetková #D5FF2C, šedé dlaždice #f4f4f4. Obrázky, loga a font se načítají z Webflow CDN tvého portfolia — když je tam smažeš nebo přejmenuješ, zmizí i tady.
-- **Kontakt:** boční drawer (tlačítka Start a project, Contact, Say Hi!, služby). Odeslání otevře mailového klienta s předvyplněným e-mailem na blazek@socialmind.cz.
-- **Předregistrace Webdesigner:** drawer s vloženým Typeformem waitlistu (stejný jako na education.socialmind.cz).
+Pořadí: hero → portfolio (Featured work) → Teaching thousands (komunita) → Webdesigner napůl obrazovky (vlevo video z hero kurzu, vpravo záložky O programu / Obsah programu se 7 moduly a předregistrací přes Typeform) → kontakt, který slouží i jako patička (formulář otevře mail s předvyplněným textem).
+Design je podle portfolia blazek-design.webflow.io (PP Pangram Sans, limetková #D5FF2C, šedé dlaždice #f4f4f4). Obrázky, video kurzu a font se načítají z Webflow CDN — když je tam smažeš nebo přejmenuješ, zmizí i tady.
+
+## Návod
+`navod.html` (na Vercelu jako **/navod**) je podrobný návod, jak animace vznikla: princip, Figma, video, zadání, klíčování snímků, sledování ruky, efekty, mávání, gesta, nasazení, chyby a prompty ke zkopírování. Nahoře je interaktivní demo bez kamery (posuvník = ruka).

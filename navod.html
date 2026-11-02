@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Návod: web, který ovládáš rukou · @blazek.design</title>
+  <meta name="description" content="Krok za krokem: jak jsem s Claudem postavil web, kde hlavu zmačkáš pěstí, zamáváním vystřelíš konfety a stránku ovládáš prsty. Prompty ke zkopírování.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="navod.css">
+</head>
+<body class="nv">
+  <header class="nv-nav">
+    <a class="nv-back" href="index.html">← <span>blazek.design</span></a>
+    <span class="label">Návod · vibecoding</span>
+    <a class="b-lime" href="index.html#webdesigner">Kurz Webdesigner</a>
+  </header>
+
+  <main id="page" class="nv-page">
+    <!-- ───────── intro -->
+    <section class="nv-hero wrap">
+      <p class="mono">Jakub Blažek — návod krok za krokem</p>
+      <h1>Jak jsem postavil web,<br><span>který ovládáš rukou</span></h1>
+      <p class="nv-lead">Zmáčkneš pěst a moje hlava se zmačká do papírové koule. Zamáváš a vystřelí konfety. Jedním prstem klikáš, dvěma scrolluješ. Žádný 3D model, žádný vývojář — Figma, jedno AI video a Claude. Tady je celý postup i s prompty.</p>
+      <div class="chips nv-tools">
+        <span class="chip-tag">Figma</span><span class="chip-tag">AI video generátor</span><span class="chip-tag">Claude</span><span class="chip-tag">MediaPipe (hand tracking)</span><span class="chip-tag">WebGL</span><span class="chip-tag">GitHub + Vercel</span>
+      </div>
+      <div class="btns left"><a class="b-lime" href="index.html">Vyzkoušet živě ↗</a><a class="b-gray" href="#prompty">Rovnou k promptům</a></div>
+    </section>
+
+    <!-- ───────── interactive demo -->
+    <section class="wrap">
+      <div class="demo">
+        <div class="demo-stage">
+          <canvas id="demoHead" width="660" height="660" aria-label="Hlava, která se mačká podle posuvníku"></canvas>
+          <img id="demoOuch" src="assets/ouch.svg" alt="" draggable="false">
+        </div>
+        <div class="demo-side">
+          <p class="label">Zkus si to bez kamery</p>
+          <h3>Posuvník = tvoje ruka</h3>
+          <svg id="demoHand" viewBox="30 36 160 172" aria-hidden="true"></svg>
+          <input id="demoRange" type="range" min="0" max="1000" value="0" aria-label="Zavřenost ruky">
+          <div class="demo-row"><span>Otevřená dlaň</span><span>Pěst</span></div>
+          <dl class="demo-vals">
+            <div><dt>ratio</dt><dd id="vRatio">1.90</dd></div>
+            <div><dt>squeeze</dt><dd id="vSq">0.00</dd></div>
+            <div><dt>snímek</dt><dd id="vFrame">0 / 120</dd></div>
+          </dl>
+          <p class="demo-note">Přesně tohle dělá web s kamerou: z kostry ruky spočítá, jak moc je zavřená, a podle toho vybere jeden ze 121 snímků videa.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── article -->
+    <div class="wrap nv-body">
+      <nav class="toc" aria-label="Obsah">
+        <p class="label">Obsah</p>
+        <a href="#princip">0 · Princip</a>
+        <a href="#figma">1 · Design ve Figmě</a>
+        <a href="#video">2 · Video hlavy</a>
+        <a href="#zadani">3 · Zadání pro Clauda</a>
+        <a href="#snimky">4 · Z videa snímky</a>
+        <a href="#ruka">5 · Sledování ruky</a>
+        <a href="#efekty">6 · Gradient, samolepky, zvuk</a>
+        <a href="#mavani">7 · Mávání a konfety</a>
+        <a href="#gesta">8 · Klik a scroll prsty</a>
+        <a href="#nasazeni">9 · Nasazení</a>
+        <a href="#chyby">10 · Na co jsme narazili</a>
+        <a href="#prompty">Prompty ke zkopírování</a>
+      </nav>
+
+      <article class="art">
+        <section id="princip" class="step">
+          <p class="step-n">00</p>
+          <h2>Princip v jedné větě</h2>
+          <p>Nejde o 3D ani o žádnou fyziku. Hlava je <b>obyčejné video</b> (5 sekund, 121 snímků), které se nepřehrává, ale <b>posouvá podle toho, jak moc máš zavřenou ruku</b>. Kamera v prohlížeči sleduje 21 bodů tvé dlaně, z nich se spočítá jedno číslo 0–1 a to číslo určí, který snímek se zobrazí. Všechno ostatní — gradient, samolepky, zvuky, konfety — jsou efekty navázané na stejné číslo.</p>
+          <div class="flow">
+            <span>Kamera</span><i>→</i><span>21 bodů ruky</span><i>→</i><span>„squeeze“ 0–1</span><i>→</i><span>snímek 0–120</span><i>→</i><span>efekty</span>
+          </div>
+        </section>
+
+        <section id="figma" class="step">
+          <p class="step-n">01</p>
+          <h2>Design ve Figmě: dva stavy</h2>
+          <p>Navrhl jsem jen <b>dva framy</b> hero sekce — začátek a konec animace. Claude pak dopočítal všechno mezi nimi.</p>
+          <ul class="list">
+            <li><b>Step 1</b> — normální hlava uprostřed, vlevo „Hello, I’m @blazek.design“, vpravo černý box, kde se bude ukazovat kostra ruky.</li>
+            <li><b>Step 2</b> — zmačkaná papírová koule a navrch komiksové samolepky: OUCH a dva blesky.</li>
+            <li>Pozadí je rozmazaný modrý gradient s maskou do světlé. Na webu se z něj stal živý shader.</li>
+          </ul>
+          <div class="tip"><span class="label">Tip</span>Pošli Claudovi odkazy přímo na framy (Copy link to selection). Přes Figma konektor si vytáhne přesné rozměry, barvy, fonty i SVG samolepek — nic nemusíš exportovat ručně.</div>
+        </section>
+
+        <section id="video" class="step">
+          <p class="step-n">02</p>
+          <h2>Video hlavy, která se mačká</h2>
+          <p>Tohle je jediná „AI magie“ v celém projektu. Potřebuješ krátké video, kde se hlava plynule zmačká do koule. Aby se z něj dal udělat web, musí splňovat pár pravidel:</p>
+          <ul class="list">
+            <li><b>Zelené pozadí</b> — kvůli vyklíčování (odstranění pozadí).</li>
+            <li><b>Statická kamera</b> — žádný zoom ani pohyb, jinak hlava „ujíždí“.</li>
+            <li><b>Plynulý přechod bez střihu</b> — ideálně 4–6 s. Moje má 5 s při 24 fps = 121 snímků.</li>
+            <li><b>Nic dalšího v záběru</b> — žádné ruce, text ani stíny.</li>
+          </ul>
+          <p>Nejspolehlivější cesta: vygeneruj si zvlášť <b>první snímek</b> (normální hlava) a <b>poslední snímek</b> (zmačkaná koule) jako obrázky a nech AI video nástroj dopočítat přechod mezi nimi (start + end frame).</p>
+          <div class="prompt">
+            <div class="prompt-head"><span class="label">Příklad promptu pro video</span><button class="copy" type="button">Kopírovat</button></div>
+            <pre>Static camera, solid chroma-key green background. A low-poly paper-craft head slowly crumples into a tight ball of crinkled paper, as if squeezed by an invisible hand. One continuous shot, no cuts, no camera movement, nothing else in frame. 5 seconds.</pre>
+          </div>
+        </section>
+
+        <section id="zadani" class="step">
+          <p class="step-n">03</p>
+          <h2>Zadání pro Clauda</h2>
+          <p>Zadání jsem nadiktoval normální řečí — žádná technická specifikace. Důležité bylo popsat <b>chování</b>, ne kód: co se stane, když zmáčknu ruku, co když ji otevřu, co když mávnu. K tomu dva odkazy na Figmu a video.</p>
+          <p>Claude si pak sám prošel video (rozložil ho na snímky a podíval se na ně), stáhl z Figmy screenshoty i assety a celé to postavil jako obyčejné HTML, CSS a JavaScript — bez frameworku a bez buildu.</p>
+          <div class="tip"><span class="label">Tip</span>Pracuj po krocích. Nejdřív jen mačkání hlavy. Pak mávání. Pak zbytek stránky a gesta. Každé kolo jsem si vyzkoušel a další prompt psal podle toho, co mi chybělo. Všechny prompty najdeš <a href="#prompty">dole</a>.</div>
+        </section>
+
+        <section id="snimky" class="step">
+          <p class="step-n">04</p>
+          <h2>Z videa 121 průhledných snímků</h2>
+          <p>Prohlížeč neumí video rychle a přesně „scrubovat“ tam a zpátky podle ruky. Proto se video rozloží na jednotlivé obrázky a ty se kreslí do canvasu.</p>
+          <ol class="list num">
+            <li><b>Rozložení</b> — ffmpeg z videa vytáhne všech 121 snímků.</li>
+            <li><b>Klíčování</b> — u každého pixelu se spočítá, jak moc je „zelený“, a podle toho dostane průhlednost. Pak se ze zbytku odečte zelený nádech (despill), aby hlava neměla zelený lem.</li>
+            <li><b>Úklid okrajů</b> — AI video mělo kolem vlasů a krku šedofialový lem a pár „smetí“. Malé ostrůvky se zahodí a okrajové pixely se odbarví.</li>
+            <li><b>Zrcadlení</b> — ve videu hlava koukala doprava, ve Figmě doleva.</li>
+            <li><b>Export</b> — WebP s průhledností, šířka 1100 px, dohromady asi 11 MB.</li>
+          </ol>
+          <div class="code">
+            <div class="prompt-head"><span class="label">Klíčování (Python, zjednodušeně)</span><button class="copy" type="button">Kopírovat</button></div>
+<pre><code>spill = g - max(r, b)               # jak moc je pixel „zelený“
+alpha = clip((26 - spill) / 16, 0, 1) # zelená = průhledná
+g     = min(g, max(r, b))             # despill: pryč se zeleným nádechem</code></pre>
+          </div>
+          <p>Ještě jedna věc, která dělá velký rozdíl: video a Figma neměly hlavu ve stejné velikosti. Takže <b>první snímek je zarovnaný přesně na Step 1</b>, <b>poslední na Step 2</b> a mezi nimi se pozice i velikost plynule přelévá. Výsledek sedí s Figmou na pixel v obou stavech.</p>
+        </section>
+
+        <section id="ruka" class="step">
+          <p class="step-n">05</p>
+          <h2>Sledování ruky v prohlížeči</h2>
+          <p>Ruku sleduje <b>MediaPipe Hand Landmarker</b> od Googlu. Běží celý v prohlížeči (nic se nikam neposílá) a pro každý snímek z kamery vrátí 21 bodů dlaně — zápěstí, klouby a konečky prstů.</p>
+          <div class="code">
+            <div class="prompt-head"><span class="label">Spuštění trackeru</span><button class="copy" type="button">Kopírovat</button></div>
+<pre><code>const vision = await FilesetResolver.forVisionTasks('vendor/mediapipe/wasm');
+const hands  = await HandLandmarker.createFromOptions(vision, {
+  baseOptions: { modelAssetPath: 'vendor/mediapipe/hand_landmarker.task', delegate: 'GPU' },
+  runningMode: 'VIDEO', numHands: 1,
+});
+const lm = hands.detectForVideo(video, performance.now()).landmarks[0]; // 21 bodů</code></pre>
+          </div>
+          <p><b>Jak poznat, že je ruka zavřená?</b> Průměrná vzdálenost konečků prstů od zápěstí se vydělí délkou dlaně. Díky tomu nezáleží na tom, jestli máš ruku blízko kamery, nebo daleko. Otevřená dlaň dává zhruba 1,8–2,1, pěst kolem 1,0.</p>
+          <div class="code">
+            <div class="prompt-head"><span class="label">Otevřenost ruky → squeeze</span><button class="copy" type="button">Kopírovat</button></div>
+<pre><code>const palm  = dist(lm[0], lm[9]);                       // zápěstí → kloub prostředníčku
+const ratio = [8, 12, 16, 20].reduce((s, i) => s + dist(lm[i], lm[0]), 0) / 4 / palm;
+const open  = clamp01((ratio - 1.05) / (1.80 - 1.05));  // 0 = pěst, 1 = dlaň
+const squeeze = smoothstep(0.40, 0.93, 1 - open);       // mrtvá zóna: mačká se až opravdová pěst
+const frame = Math.round(squeeze * 120);                // který ze 121 snímků</code></pre>
+          </div>
+          <ul class="list">
+            <li><b>Mrtvá zóna</b> — napůl uvolněná ruka nedělá nic. Hlava se mačká až u pořádné pěsti.</li>
+            <li><b>Vyhlazení</b> — číslo z kamery trochu skáče, tak se hlava k cíli „dotahuje“ s tlumením. Pohyb je plynulý, ale pořád rychlý.</li>
+            <li><b>Samokalibrace</b> — když tvoje pěst nebo dlaň jde za nastavený rozsah, rozsah se postupně roztáhne.</li>
+          </ul>
+        </section>
+
+        <section id="efekty" class="step">
+          <p class="step-n">06</p>
+          <h2>Gradient, parallax, samolepky a zvuk</h2>
+          <ul class="list">
+            <li><b>Živý gradient</b> — WebGL shader vezme obrázek gradientu z Figmy, rozmaže ho a pomalu ho „rozlévá“ vlnami. Když mačkáš, gradient se stáčí do hlavy. Maska je stejná rozmazaná elipsa jako ve Figmě.</li>
+            <li><b>Parallax</b> — poloha dlaně v záběru posouvá vrstvy různou rychlostí: pozadí, hlavu, text i box. Hlava se k tomu lehce natáčí do 3D.</li>
+            <li><b>Samolepky</b> — při ~86 % zmačknutí vyskočí OUCH a blesky s pružinovou animací a hlava se zatřese. Pod ~55 % zase zmizí. Rozdíl mezi prahy brání blikání.</li>
+            <li><b>Zvuky</b> — mačkání papíru je zvuková stopa z AI videa a hraje tím hlasitěji, čím rychleji ruku zavíráš. „Pop“ samolepek a „boing“ při rozbalení se generují přímo v prohlížeči (Web Audio), žádné soubory.</li>
+          </ul>
+          <div class="tip"><span class="label">Pozor</span>Prohlížeč nepustí zvuk, dokud uživatel na stránku aspoň jednou neklikne. Proto je v boxu tlačítko Sound a zvuk se zapne po prvním kliknutí.</div>
+        </section>
+
+        <section id="mavani" class="step">
+          <p class="step-n">07</p>
+          <h2>Mávání na pozdrav a konfety</h2>
+          <p>Mávání se pozná podle <b>konečků prstů</b>, ne podle středu dlaně. Díky tomu funguje, i když máváš jen v zápěstí. Když konečky během 1,5 s aspoň třikrát změní směr, je to pozdrav:</p>
+          <ul class="list">
+            <li>hlava se natočí k tobě, nakloní se a kývne,</li>
+            <li>vystřelí konfety (canvas částice s gravitací a třepotáním),</li>
+            <li>vyskočí bublina AHOJ! ve stejném komiksovém stylu jako OUCH.</li>
+          </ul>
+          <div class="tip"><span class="label">Chyba, na kterou jsme narazili</span>Při mávání se hlava sama mačkala. Prsty v rychlém pohybu jsou na kameře rozmazané a model je vidí kratší, takže si myslí, že zavíráš ruku. Řešení: během mávání a 0,4 s po něm se mačkání úplně blokuje.</div>
+        </section>
+
+        <section id="gesta" class="step">
+          <p class="step-n">08</p>
+          <h2>Jeden prst klik, dva prsty scroll</h2>
+          <p>Pro každý prst se zjistí, jestli je natažený: konček musí být od zápěstí jasně dál než prostřední kloub. Z toho vzniknou „pózy“:</p>
+          <div class="code">
+            <div class="prompt-head"><span class="label">Rozpoznání pózy</span><button class="copy" type="button">Kopírovat</button></div>
+<pre><code>const ext = [[8, 6], [12, 10], [16, 14], [20, 18]]   // [konček, kloub] pro 4 prsty
+  .map(([tip, pip]) => dist(lm[tip], lm[0]) > dist(lm[pip], lm[0]) * 1.12);
+
+if (ext[0] && !ext[1] && !ext[2] && !ext[3]) pose = 'point'; // ☝ kurzor
+else if (ext[0] && ext[1] && !ext[2] && !ext[3]) pose = 'two'; // ✌ scroll
+else if (ext.filter(Boolean).length >= 3) pose = 'open';      // dlaň: mávání
+else if (!ext.some(Boolean)) pose = 'fist';                   // pěst: mačkání</code></pre>
+          </div>
+          <ul class="list">
+            <li><b>☝ Kurzor</b> — konček ukazováčku řídí kurzor. Střed záběru kamery odpovídá celé obrazovce, takže stačí malé pohyby. Když kurzor podržíš 0,7 s nad tlačítkem, kroužek se doplní a klikne.</li>
+            <li><b>✌ Scroll</b> — pohyb dvou prstů nahoru a dolů táhne stránku. Po puštění dojede setrvačností.</li>
+            <li><b>Stabilita</b> — póza se přepne až po několika snímcích za sebou. Kurzor se tak nezapíná a nevypíná při každém zaškobrtnutí.</li>
+          </ul>
+        </section>
+
+        <section id="nasazeni" class="step">
+          <p class="step-n">09</p>
+          <h2>Nasazení: GitHub + Vercel</h2>
+          <p>Celý web jsou statické soubory, takže hosting je zdarma a jednoduchý: kód na GitHubu, Vercel ho při každé změně sám nasadí. Claude to celé proklikal v mém Chromu. Já jsem jen jednou potvrdil přístupy (2FA na GitHubu a ověřovací kód z Vercelu).</p>
+          <ul class="list">
+            <li><b>Kamera chce HTTPS</b> — na Vercelu je automaticky. Lokálně funguje jen přes localhost, ne když otevřeš soubor.</li>
+            <li><b>Všechno je přibalené</b> — model ruky i runtime MediaPipe leží přímo ve webu, nic se nenačítá z cizích serverů.</li>
+          </ul>
+        </section>
+
+        <section id="chyby" class="step">
+          <p class="step-n">10</p>
+          <h2>Na co jsme narazili</h2>
+          <div class="faq">
+            <details><summary>Zelený a fialový lem kolem hlavy</summary><p>AI video mělo kolem vlasů a krku barevný lem. Pomohl despill (odečtení zelené), odbarvení okrajových pixelů a smazání malých ostrůvků mimo hlavu.</p></details>
+            <details><summary>Hlava se mačkala při mávání</summary><p>Rozmazané prsty vypadají na kameře kratší. Během mávání se proto mačkání blokuje a hlava se mačká jen při opravdové pěsti (mrtvá zóna 0,40–0,93).</p></details>
+            <details><summary>Tlačítko v hero nešlo kliknout</summary><p>Vrstvy hero sekce (text, hlava, box) leží přes sebe na celou šířku, takže horní vrstva „zakrývala“ tlačítko pod sebou — myši i ruce. Řešení: vrstvy nechytají kliky (pointer-events: none) a chytají je jen skutečné ovládací prvky.</p></details>
+            <details><summary>Stránka se sekala s otevřeným panelem</summary><p>Rozmazání celé obrazovky za panelem (backdrop-filter) bylo extrémně náročné. Nahradilo ho obyčejné ztmavení a plynulost se vrátila.</p></details>
+            <details><summary>Odkazy z ruky se neotevíraly</summary><p>Prohlížeč blokuje nová okna, která neotevřel člověk. Odkazy „kliknuté“ rukou se proto otevřou ve stejném okně.</p></details>
+          </div>
+        </section>
+
+        <section id="prompty" class="step">
+          <p class="step-n">✦</p>
+          <h2>Prompty ke zkopírování</h2>
+          <p>Takhle jsem to Claudovi zadával, jen učesané. Odkazy na Figmu a video si vyměň za svoje.</p>
+
+          <div class="prompt">
+            <div class="prompt-head"><span class="label">1 · Hero s mačkající se hlavou</span><button class="copy" type="button">Kopírovat</button></div>
+            <pre>Postav mi hero sekci portfolia (100 % výšky okna), kterou ovládám rukou přes kameru.
+
+Přikládám video, kde se moje hlava zmačká do papírové koule, a dva framy z Figmy:
+- Step 1 (výchozí stav): [odkaz na frame]
+- Step 2 (zmačkaná hlava + samolepky): [odkaz na frame]
+
+Chování:
+- Otevřená dlaň = normální hlava (první snímek videa). Když ruku pomalu zavírám do pěsti, hlava se postupně mačká (video se posouvá podle toho, jak moc mám ruku zavřenou). Když ruku otevřu, hlava se zase rozbalí.
+- Když ruku úplně zmáčknu, přidej zvukový efekt a „popni“ ilustrace z druhého framu (samolepky navrch). Ať je to vtipné.
+- Když hýbu rukou, ať se celý web jemně hýbe (parallax).
+- Rozpohybuj gradient na pozadí.
+- Vpravo je černý box: ukazuj v něm kostru mé ruky.
+
+Pozadí videa odstraň (je zelené), hlavu zarovnej přesně podle Figmy v obou stavech.</pre>
+          </div>
+
+          <div class="prompt">
+            <div class="prompt-head"><span class="label">2 · Mávání, konfety a citlivost</span><button class="copy" type="button">Kopírovat</button></div>
+            <pre>Analyzuj, kdy rukou mávám na pozdrav (dlaní i jen v zápěstí). Při zamávání ať se hlava trochu natočí ke mně a kývne, vystřelí konfety a vyskočí bublina „AHOJ!“ ve stylu samolepky OUCH.
+
+A ať se hlava mačká jen tehdy, když ruku opravdu zmáčknu do pěsti — ne při napůl uvolněné ruce a ne při mávání.</pre>
+          </div>
+
+          <div class="prompt">
+            <div class="prompt-head"><span class="label">3 · Zbytek stránky a ovládání prsty</span><button class="copy" type="button">Kopírovat</button></div>
+            <pre>Dogeneruj zbytek stránky v designu mého portfolia: [odkaz na web / Figmu].
+Pořadí: hero, portfolio, „Teaching thousands“ (komunita), blok kurzu napůl obrazovky (vlevo video, vpravo obsah a lekce) a nakonec kontakt, který slouží i jako patička.
+
+Přidej ovládání rukou pro celou stránku:
+- jeden prst nahoru = kurzor; když ho podržím nad tlačítkem, klikne,
+- dva prsty = scrollování stránky pohybem ruky nahoru a dolů.</pre>
+          </div>
+
+          <div class="prompt">
+            <div class="prompt-head"><span class="label">4 · Nasazení</span><button class="copy" type="button">Kopírovat</button></div>
+            <pre>Hoď to na GitHub a napoj na Vercel. Jsem přihlášený v Chromu — repo založ jako veřejné, a kdyby bylo potřeba něco potvrdit, napiš mi.</pre>
+          </div>
+        </section>
+
+        <section class="nv-cta">
+          <div class="ct">
+            <div class="ct-glow" aria-hidden="true"></div>
+            <p class="label light">Chceš to umět taky?</p>
+            <h2>Přesně tohle učím v kurzu <span>Webdesigner.</span></h2>
+            <p class="nv-cta-sub">Modul AI &amp; vibe coding: 29 lekcí o tom, jak s Claudem, Figmou a dalšími nástroji postavit web od zadání až po nasazení. Plus design, no-code a prodej.</p>
+            <div class="btns left">
+              <a class="b-lime big" href="https://aokmy84iync.typeform.com/to/K9GfbDKa" target="_blank" rel="noopener">Předregistrovat se ↗</a>
+              <a class="b-glass big" href="https://www.instagram.com/blazek.design/" target="_blank" rel="noopener">Sleduj @blazek.design</a>
+            </div>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="navod.js"></script>
+</body>
+</html>

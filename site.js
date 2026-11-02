@@ -69,6 +69,12 @@
   const scrim = $('#drawerScrim');
   let openId = null, lastFocus = null;
   function openDrawer(id, opts = {}) {
+    if (id === 'contact') {            // contact lives in the footer now
+      closeDrawer();
+      scrollToEl(document.getElementById('contact'));
+      if (opts.topic) setTopic(opts.topic, true);
+      return;
+    }
     const d = document.getElementById('drawer-' + id);
     if (!d) return;
     if (openId && openId !== id) closeDrawer(true);
@@ -133,6 +139,25 @@
     location.href = `mailto:blazek@socialmind.cz?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     $('#formNote').textContent = 'Your mail app should open now. Or write to blazek@socialmind.cz';
   });
+
+  // ── tabs (O programu / Obsah programu)
+  $$('.tabs').forEach(tabs => {
+    const root = tabs.parentElement;
+    $$('.tab', tabs).forEach(t => t.addEventListener('click', () => {
+      $$('.tab', tabs).forEach(x => { const on = x === t; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
+      $$('.tab-panel', root).forEach(p => p.classList.toggle('on', p.dataset.panel === t.dataset.tab));
+    }));
+  });
+  // ── module accordion
+  $$('.mod-head').forEach(h => h.addEventListener('click', () => {
+    const m = h.parentElement, open = !m.classList.contains('open');
+    m.classList.toggle('open', open); h.setAttribute('aria-expanded', open);
+  }));
+  // ── course video plays only while visible
+  const vid = $('#wdVideo');
+  if (vid) new IntersectionObserver(([en]) => {
+    if (en.isIntersecting) { vid.preload = 'auto'; vid.play().catch(() => {}); } else vid.pause();
+  }, { threshold: 0.2 }).observe(vid);
 
   window.siteUI = {
     openDrawer, closeDrawer, toast, scrollToY,
