@@ -490,7 +490,7 @@ addEventListener('keydown', e => {
     e.preventDefault(); if (!e.repeat) S.pressed = true;
   }
   else if (e.key === 'd' || e.key === 'D') { S.debug = !S.debug; debugEl.hidden = !S.debug; }
-  else if (e.key === 'c' || e.key === 'C') { S.showCam = !S.showCam; root.classList.toggle('show-cam', S.showCam); }
+  else if (e.key === 'c' || e.key === 'C') { S.showCam = !S.showCam; root.classList.toggle('hide-cam', S.showCam); }
   else if (e.key === 'm' || e.key === 'M') { S.input = S.input === 'camera' ? 'mouse' : 'camera'; }
   else if (e.key === 's' || e.key === 'S') { if (A.unlocked) setSound(!A.on); }
 });
@@ -507,6 +507,7 @@ async function initCamera() {
     });
     cam.srcObject = stream;
     await cam.play();
+    root.classList.add('cam-on');   // show the live camera in the media box
     S.camStatus = 'model';
   } catch (e) {
     console.warn('Camera unavailable:', e);
@@ -724,25 +725,24 @@ function drawSkeleton(live) {
   const w = skel.width, h = skel.height;
   sctx.clearRect(0, 0, w, h);
   if (!live || !S.hand) return;
-  const ar = (cam.videoWidth || 640) / (cam.videoHeight || 480);
-  const pts = S.hand.map(p => ({ x: (1 - p.x) * ar, y: p.y }));
-  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-  for (const p of pts) { x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y); }
-  const target = { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, size: Math.max(x1 - x0, y1 - y0, 0.12) };
-  if (!S.view) S.view = { ...target };
-  for (const k of ['cx', 'cy', 'size']) S.view[k] = lerp(S.view[k], target[k], 0.25);
-  const sc = Math.min(w, h) * 0.62 / S.view.size;
-  const ox = w / 2 - S.view.cx * sc, oy = h * 0.52 - S.view.cy * sc;
+  // map landmarks onto the mirrored camera image (object-fit: cover) so the skeleton sits on your real hand
+  const vw = cam.videoWidth || 640, vh = cam.videoHeight || 480;
+  const k = Math.max(w / vw, h / vh);
+  const offX = (w - vw * k) / 2, offY = (h - vh * k) / 2;
+  const pts = S.hand.map(p => ({ x: (1 - p.x) * vw, y: p.y * vh }));
+  const sc = k, ox = offX, oy = offY;
   const unit = w / 250;
-  sctx.strokeStyle = '#fff'; sctx.fillStyle = '#fff';
-  sctx.lineWidth = 1.2 * unit; sctx.lineCap = 'round';
+  sctx.strokeStyle = '#fff'; sctx.fillStyle = '#D5FF2C';
+  sctx.shadowColor = 'rgba(0,0,0,.55)'; sctx.shadowBlur = 4 * unit;
+  sctx.lineWidth = 1.6 * unit; sctx.lineCap = 'round';
   sctx.beginPath();
   for (const [a, b] of BONES) {
     sctx.moveTo(pts[a].x * sc + ox, pts[a].y * sc + oy);
     sctx.lineTo(pts[b].x * sc + ox, pts[b].y * sc + oy);
   }
   sctx.stroke();
-  for (const p of pts) { sctx.beginPath(); sctx.arc(p.x * sc + ox, p.y * sc + oy, 2.6 * unit, 0, Math.PI * 2); sctx.fill(); }
+  for (const p of pts) { sctx.beginPath(); sctx.arc(p.x * sc + ox, p.y * sc + oy, 2.8 * unit, 0, Math.PI * 2); sctx.fill(); }
+  sctx.shadowBlur = 0;
 }
 
 // ─────────────────────────────── main loop
@@ -857,7 +857,7 @@ let introDone = false;
 function firstFrameReady() {
   if (introDone) return; introDone = true;
   document.querySelectorAll('.title .word').forEach((w, i) => w.style.setProperty('--d', 150 + i * 110));
-  $('.btn').style.setProperty('--d', 520);
+  document.querySelectorAll('#hero .btn').forEach((b, i) => b.style.setProperty('--d', 520 + i * 90));
   requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('intro')));
   setTimeout(() => document.querySelectorAll('.title .word, .btn').forEach(el => el.style.setProperty('--d', 0)), 1800);
 }

@@ -31,7 +31,7 @@ Mimo hero je vpravo dole malý panel s kostrou ruky a aktuálním režimem. Odka
 Pozadí je živý WebGL gradient z obrázku z Figmy: pomalu teče, při zmáčknutí se stáčí do hlavy a při mávání se vlní.
 
 Záložní ovládání: **podržení myši / mezerníku** = zmáčknutí, pohyb myši = parallax, rychlé zatřepání myší do stran = zamávání.
-Klávesy: **S** zvuk · **C** ukázat obraz z kamery v boxu · **M** jen myš · **D** živé hodnoty pro ladění.
+Klávesy: **S** zvuk · **C** skrýt/ukázat obraz z kamery v boxu (standardně je vidět) · **M** jen myš · **D** živé hodnoty pro ladění.
 
 ## Ladění (`app.js` → `CFG` nahoře)
 - `openLo` / `openHi`: rozsah otevřenosti ruky (D ukáže tvoje živé `ratio`). Rozsah se během používání sám mírně přizpůsobuje.
@@ -58,7 +58,7 @@ Jednodušší je poslat mi ji a já ji vyklíčuju a zarovnám.
 - `vendor/mediapipe/`: model a runtime pro sledování ruky, přibalené lokálně
 
 ## Zbytek stránky
-Pořadí: hero → portfolio (Featured work) → Teaching thousands (komunita) → Webdesigner napůl obrazovky (vlevo video z hero kurzu, vpravo záložky O programu / Obsah programu se 7 moduly a předregistrací přes Typeform) → kontakt, který slouží i jako patička (formulář otevře mail s předvyplněným textem).
+Pořadí: hero → portfolio (Featured work) → Teaching thousands (komunita) → Webdesigner napůl obrazovky (vlevo video z hero kurzu, vpravo záložky O programu / Obsah programu se 7 moduly a předregistrací přes Typeform) — stránka končí kurzem. Kontakt je boční drawer (Contact v navigaci, Start a project, Say Hi!); formulář otevře mail s předvyplněným textem.
 Design je podle portfolia blazek-design.webflow.io (PP Pangram Sans, limetková #D5FF2C, šedé dlaždice #f4f4f4). Obrázky, video kurzu a font se načítají z Webflow CDN — když je tam smažeš nebo přejmenuješ, zmizí i tady.
 
 ## Návod

@@ -160,8 +160,15 @@ body {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   transform: scaleX(-1); opacity: 0; transition: opacity .4s;
 }
-.show-cam #cam { opacity: .28; }
+.cam-on #cam { opacity: 1; }
+.cam-on.hide-cam #cam { opacity: 0; }
+#media::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent 22%, transparent 70%, rgba(0,0,0,.6)); opacity: 0; transition: opacity .4s; }
+.cam-on #media::after { opacity: 1; }
+#skel { z-index: 2; }
+#media .chip, #hint { z-index: 3; }
+.cam-on #handPlaceholder { opacity: 0; animation: none; }
 #skel { position: absolute; inset: 0; width: 100%; height: 100%; }
+#hint { color: #c9d0d3; }
 #handPlaceholder {
   position: absolute; left: 104px; top: 91px; width: 104.588px; height: 127px;
   transition: opacity .5s;
@@ -615,3 +622,10 @@ body.drawer-open { overflow: hidden; }
 .nv2-next b { flex: none; color: var(--lime); font-weight: 600; }
 .nv2-next:hover, .nv2-next.hand-hover { transform: translateY(-2px); }
 @media (max-width: 860px) { .st { grid-template-columns: 36px minmax(0, 1fr); } .st-prompt { grid-column: 1 / -1; } .nv2 { grid-template-columns: 1fr; } .nv2-next { flex-direction: column; align-items: flex-start; } }
+
+/* hero: second button (to the tutorial) */
+.btn2 { left: 205px; background: rgba(255,255,255,.45); color: #1d1d1d; box-shadow: 0 0 0 1px rgba(255,255,255,.7) inset; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+.btn2:hover, .btn2.hand-hover { background: rgba(255,255,255,.75); }
+.portrait .btn { left: 590px; }
+.portrait .btn2 { left: 715px; }
+.btn.hand-hover { transform: translateY(-2px) scale(1.03); }

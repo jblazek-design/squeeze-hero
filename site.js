@@ -69,12 +69,6 @@
   const scrim = $('#drawerScrim');
   let openId = null, lastFocus = null;
   function openDrawer(id, opts = {}) {
-    if (id === 'contact') {            // contact lives in the footer now
-      closeDrawer();
-      scrollToEl(document.getElementById('contact'));
-      if (opts.topic) setTopic(opts.topic, true);
-      return;
-    }
     const d = document.getElementById('drawer-' + id);
     if (!d) return;
     if (openId && openId !== id) closeDrawer(true);
@@ -149,9 +143,11 @@
     }));
   });
   // ── module accordion
+  // only one module open at a time
   $$('.mod-head').forEach(h => h.addEventListener('click', () => {
     const m = h.parentElement, open = !m.classList.contains('open');
-    m.classList.toggle('open', open); h.setAttribute('aria-expanded', open);
+    $$('.mod', m.parentElement).forEach(x => { x.classList.remove('open'); x.querySelector('.mod-head').setAttribute('aria-expanded', 'false'); });
+    if (open) { m.classList.add('open'); h.setAttribute('aria-expanded', 'true'); }
   }));
   // ── course video plays only while visible
   const vid = $('#wdVideo');

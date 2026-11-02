@@ -19,7 +19,7 @@
       <a href="#work">Work</a>
       <a href="#webdesigner">Kurz</a>
       <a href="#navod">Návod</a>
-      <a class="nav-cta" href="#contact" data-drawer="contact">Contact</a>
+      <a class="nav-cta" href="#" data-drawer="contact">Contact</a>
     </nav>
   </header>
 
@@ -36,6 +36,7 @@
           <span class="line dim"><span class="word">@blazek.design</span></span>
         </h1>
         <a class="btn" href="#work"><span>Explore work</span></a>
+        <a class="btn btn2" href="#navod"><span>Jak to vzniklo</span></a>
       </div>
 
       <!-- centre: the head -->
@@ -128,7 +129,7 @@
           <div class="chips"><span class="chip-tag">Art Director</span><span class="chip-tag">UI/UX</span><span class="chip-tag">10k+ students</span></div>
         </a>
         </div>
-        <div class="btns center reveal"><a class="b-lime" href="https://blazek-design.webflow.io/portfolio" target="_blank" rel="noopener">Show more projects</a><a class="b-gray" href="#contact" data-drawer="contact">Start a project</a></div>
+        <div class="btns center reveal"><a class="b-lime" href="https://blazek-design.webflow.io/portfolio" target="_blank" rel="noopener">Show more projects</a><a class="b-gray" href="#" data-drawer="contact">Start a project</a></div>
       </div>
     </section>
 
@@ -315,47 +316,42 @@ Pak dodělej zbytek stránky podle mého portfolia [odkaz]. Přidej ovládání 
       </div>
     </section>
 
-    <!-- ───────── contact = footer -->
-    <footer id="contact" class="sec">
-      <div class="ct">
-        <div class="ct-glow" aria-hidden="true"></div>
-        <div class="ct-grid">
-          <div class="ct-left">
-            <div class="ct-me"><img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/695916f0d73ce68e7324b6ac_Profile%20pic.avif" alt="Jakub Blažek" draggable="false"><div><b>Jakub Blažek</b><span>Designer &amp; Art Director</span></div></div>
-            <h2 class="ct-title">Ready for visuals<br>that work? <span>You’re one step away.</span></h2>
-            <div class="ct-links">
-              <button type="button" class="ct-link" data-copy="blazek@socialmind.cz"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 4.5A1.5 1.5 0 0 1 4.5 3h7A1.5 1.5 0 0 1 13 4.5v4A1.5 1.5 0 0 1 11.5 10H8l-3 2.5V10a1.5 1.5 0 0 1-2-1.5z" fill="none" stroke="currentColor" stroke-linejoin="round"/></svg>blazek@socialmind.cz<i>Copy</i></button>
-              <a class="ct-link" href="https://www.instagram.com/blazek.design/" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14"><rect x="2.5" y="2.5" width="11" height="11" rx="3.2" fill="none" stroke="currentColor"/><circle cx="8" cy="8" r="2.6" fill="none" stroke="currentColor"/></svg>@blazek.design<i>↗</i></a>
-              <a class="ct-link" href="#navod"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13.5c-1.6-1.5-3.4-2-5.5-2v-8c2.1 0 3.9.5 5.5 2m0 8c1.6-1.5 3.4-2 5.5-2v-8c-2.1 0-3.9.5-5.5 2m0 8v-8" fill="none" stroke="currentColor" stroke-linejoin="round"/></svg>Jak vznikla tahle stránka<i>Návod</i></a>
-            </div>
-          </div>
-          <form id="contactForm" class="ct-form" novalidate>
-            <p class="label">Start a project</p>
-            <fieldset class="dr-topics">
-              <legend class="label sr">What are we making?</legend>
-              <button type="button" class="topic" data-topic="Brand & Visual Identity">Brand identity</button>
-              <button type="button" class="topic" data-topic="Websites">Website</button>
-              <button type="button" class="topic" data-topic="Apps & UI/UX">App / UI/UX</button>
-              <button type="button" class="topic" data-topic="Art Direction">Art direction</button>
-              <button type="button" class="topic" data-topic="Something else">Something else</button>
-            </fieldset>
-            <div class="row2">
-              <label class="field"><span class="label">Your name</span><input name="name" autocomplete="name" placeholder="Jana Nováková"></label>
-              <label class="field"><span class="label">Email</span><input name="email" type="email" autocomplete="email" placeholder="jana@company.com"></label>
-            </div>
-            <label class="field"><span class="label">About the project</span><textarea name="message" rows="4" placeholder="A few lines about what you need, timeline, budget…"></textarea></label>
-            <button class="b-lime wide" type="submit">Send message</button>
-            <p class="dr-note" id="formNote">Opens your mail app with everything filled in.</p>
-          </form>
-        </div>
-        <p class="f-word" aria-hidden="true">blazek.design</p>
-        <div class="f-bottom"><span>© 2026 Jakub Blažek</span><a href="#navod">Návod: jak vznikla tahle stránka</a><button type="button" class="to-top" data-top>Back to top ↑</button></div>
-      </div>
-    </footer>
   </main>
 
   <!-- ───────── waitlist drawer -->
   <div id="drawerScrim" hidden></div>
+  <aside class="drawer" id="drawer-contact" role="dialog" aria-modal="true" aria-labelledby="contactTitle" aria-hidden="true">
+    <div class="dr-head">
+      <p class="label">Contact Jakub</p>
+      <button class="dr-close" type="button" data-close aria-label="Close">Close</button>
+    </div>
+    <div class="dr-body">
+      <div class="dr-me">
+        <img src="https://cdn.prod.website-files.com/69590862fc711ff077d13206/695916f0d73ce68e7324b6ac_Profile%20pic.avif" alt="" draggable="false">
+        <div><b>Jakub Blažek</b><span>Designer &amp; Art Director</span></div>
+      </div>
+      <h2 id="contactTitle">Let’s talk design</h2>
+      <form id="contactForm" novalidate>
+        <fieldset class="dr-topics">
+          <legend class="label">What are we making?</legend>
+          <button type="button" class="topic" data-topic="Brand & Visual Identity">Brand identity</button>
+          <button type="button" class="topic" data-topic="Websites">Website</button>
+          <button type="button" class="topic" data-topic="Apps & UI/UX">App / UI/UX</button>
+          <button type="button" class="topic" data-topic="Art Direction">Art direction</button>
+          <button type="button" class="topic" data-topic="Something else">Something else</button>
+        </fieldset>
+        <label class="field"><span class="label">Your name</span><input name="name" autocomplete="name" placeholder="Jana Nováková"></label>
+        <label class="field"><span class="label">Email</span><input name="email" type="email" autocomplete="email" placeholder="jana@company.com"></label>
+        <label class="field"><span class="label">About the project</span><textarea name="message" rows="4" placeholder="A few lines about what you need, timeline, budget…"></textarea></label>
+        <button class="b-lime wide" type="submit">Send message</button>
+        <p class="dr-note" id="formNote">Opens your mail app with everything filled in.</p>
+      </form>
+      <div class="dr-alt">
+        <button type="button" class="dr-link" data-copy="blazek@socialmind.cz"><span class="label">Email</span><b>blazek@socialmind.cz</b><i>Copy</i></button>
+        <a class="dr-link" href="https://www.instagram.com/blazek.design/" target="_blank" rel="noopener"><span class="label">Instagram</span><b>@blazek.design</b><i>↗</i></a>
+      </div>
+    </div>
+  </aside>
   <aside class="drawer wide" id="drawer-waitlist" role="dialog" aria-modal="true" aria-labelledby="wlTitle" aria-hidden="true">
     <div class="dr-head">
       <p class="label" id="wlTitle">Webdesigner · předregistrace</p>
